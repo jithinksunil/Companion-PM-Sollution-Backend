@@ -5,7 +5,7 @@ export const superUserSessionCheck=(req:reqType,res:resType,next:()=>void)=>{
         console.log('session verified');
     }
     else{
-        res.json({message:"unautherised acces"})
+        res.json({message:"unautherised access"})
         req.session.destroy()
     }
 }
