@@ -13,6 +13,19 @@ app.use(
     })
 )
 
+const session=require('express-session')
+app.use(session({//setup session
+    resave:true,//to resave the session
+    saveUninitialized:true,
+    secret:'khfihuifgyscghi6543367567vhbjjfgt45475nvjhgjgj+6+9878', //random hash key string to genarate session id  
+}))
+
+
+app.use((req, res, next) => {//setup cache
+    res.set("Cache-Control", "no-store");
+    next();
+});
+
 import path from 'path'
 app.use('/uploads',express.static(path.join(__dirname,'./uploads')))//to download image from the static folder
 
