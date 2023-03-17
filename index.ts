@@ -37,6 +37,9 @@ app.use(cookieParser());
 
 
 import superUserRouter from './routes/superUserRoutes'
+import adminRouter from './routes/adminRouter'
+
 app.use('/',superUserRouter)
+app.use('/admin',adminRouter)
 app.listen(8000,()=>{console.log('server started');
 })

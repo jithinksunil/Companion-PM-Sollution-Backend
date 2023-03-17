@@ -1,4 +1,4 @@
-import { reqType,resType } from "../types/expressTypes"
+import { reqType,resType } from "../../types/expressTypes"
 export const superUserSessionCheck=(req:reqType,res:resType,next:()=>void)=>{
     if(req.session.superUser){
         next()
