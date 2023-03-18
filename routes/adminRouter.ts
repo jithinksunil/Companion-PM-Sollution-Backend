@@ -9,5 +9,7 @@ adminRouter.get('/verifyToken',adminVerifyToken,adminSessionCheck ,adminControll
 adminRouter.post('/login',adminController.logIn)
 adminRouter.get('/dashboard',adminVerifyToken, adminSessionCheck, adminController.adminDashBoard)
 adminRouter.get('/profile',adminVerifyToken, adminSessionCheck, adminController.adminProfile)
+adminRouter.get('/superusermanagement',adminVerifyToken, adminSessionCheck, adminController.superUserManagement)
+adminRouter.get('/blockorunblock',adminVerifyToken, adminSessionCheck, adminController.blockOrUnblock)
 
 export default adminRouter

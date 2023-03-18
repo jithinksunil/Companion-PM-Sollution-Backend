@@ -1,5 +1,6 @@
 import { reqType,resType } from "../../types/expressTypes"
 import adminCollection from "../../models/adminSchema"
+import superUserCollection from "../../models/superUserSchema"
 import jwt from 'jsonwebtoken'
 
 const adminController={
@@ -37,7 +38,26 @@ const adminController={
     adminProfile:(req:reqType,res:resType)=>{
         const adminData=req.session.admin
         res.json({adminTokenVerified:true,adminData})
-    }
+    },
+    superUserManagement:(req:reqType,res:resType)=>{
+        superUserCollection.find().then((superUsersData)=>{
+            res.json({adminTokenVerified:true,superUsersData})
+        }).catch(err=>{
+            console.log(err)
+            res.json({adminTokenVerified:true,message:'Sorry for connot retrieve detas now, Database facing issues'})
+        })
+    },
+    blockOrUnblock:(req:reqType,res:resType)=>{
+        
+        console.log(req.query.status)
+        
+        superUserCollection.updateOne({_id:req.query.id},{status:req.query.status}).then(()=>{
+            res.json({action:true,message:'updated'})
+        }).catch((err)=>{
+            console.log(err)
+            res.json({action:false,message:'Sorry for connot retrieve datas now, Database facing issues'})
+        })
+    },
 }
 
 export default adminController
