@@ -12,8 +12,7 @@ const superUseController={
     },
     logIn:(req:reqType,res:resType)=>{
         const {email,password}=req.body
-        console.log(email);
-        console.log(password);
+
         
         superUserCollection.findOne({email}).then((superUser)=>{
             if(superUser){
@@ -40,6 +39,7 @@ const superUseController={
     superUserProfile:(req:reqType,res:resType)=>{
         const superUserData=req.session.superUser
         res.json({superUserTokenVerified:true,superUserData})
+        
     }
 }
 

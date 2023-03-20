@@ -40,11 +40,18 @@ const adminController={
         res.json({adminTokenVerified:true,adminData})
     },
     superUserManagement:(req:reqType,res:resType)=>{
-        superUserCollection.find().then((superUsersData)=>{
+        let {search}=req.query
+        if(!search)search=''
+
+        superUserCollection.find({$or:[
+            {email:{$regex:search,$options:'i'}},
+            {companyName:{$regex:search,$options:'i'}}]})
+            .then((superUsersData:any)=>{
+                if(superUsersData.length==0){superUsersData=[{email:'nothing to display',companyName:'nothing to display',password:'nothing to display'}]}
             res.json({adminTokenVerified:true,superUsersData})
         }).catch(err=>{
             console.log(err)
-            res.json({adminTokenVerified:true,message:'Sorry for connot retrieve detas now, Database facing issues'})
+            res.json({adminTokenVerified:true,message:'Sorry, connot retrieve datas now, Database facing issues'})
         })
     },
     blockOrUnblock:(req:reqType,res:resType)=>{
