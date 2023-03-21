@@ -4,13 +4,14 @@ import jwt from 'jsonwebtoken'
 export const superUserVerifyToken=(req:reqType,res:resType,next:()=>void)=>{
     const superUserToken:string=req.cookies.superUserToken
     if(superUserToken){
+        
         jwt.verify(superUserToken,'mySecretKeyForSuperUser',(err,decoded)=>{
             if(err){
                 console.log(err);
                 req.session.destroy()
                 res.json({superUserTokenVerified:false})
             }else{
-                console.log('Token Verified');
+                console.log('Token Verified')
                 next()
             }
         })

@@ -47,9 +47,10 @@ const adminController={
             {email:{$regex:search,$options:'i'}},
             {companyName:{$regex:search,$options:'i'}}]})
             .then((superUsersData:any)=>{
-                if(superUsersData.length==0){superUsersData=[{email:'nothing to display',companyName:'nothing to display',password:'nothing to display'}]}
+                // if(superUsersData.length==0){superUsersData=[{email:'nothing to display',companyName:'nothing to display',password:'nothing to display'}]}
             res.json({adminTokenVerified:true,superUsersData})
         }).catch(err=>{
+            
             console.log(err)
             res.json({adminTokenVerified:true,message:'Sorry, connot retrieve datas now, Database facing issues'})
         })

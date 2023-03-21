@@ -1,6 +1,7 @@
 import { reqType,resType } from "../../types/expressTypes"
 import superUserCollection from "../../models/superUserSchema"
 import jwt from 'jsonwebtoken'
+import cloudinary from '../../config/cloudinaryConfig'
 
 const superUseController={
     verifyToken:(req:reqType,res:resType)=>{
@@ -37,8 +38,35 @@ const superUseController={
         res.json({superUserTokenVerified:true,superUserData})
     },
     superUserProfile:(req:reqType,res:resType)=>{
-        const superUserData=req.session.superUser
-        res.json({superUserTokenVerified:true,superUserData})
+        superUserCollection.findOne({_id:req.session.superUser._id}).then((superUserData)=>{
+            res.json({superUserTokenVerified:true,superUserData})
+        }).catch(()=>{res.json({superUserTokenVerified:true,message:'Cannot fetch data now data base issue'})})
+    },
+    updateImage:(req:reqType,res:resType)=>{
+        console.log(req.params.id);
+        const userId=req.params.id
+        if(req.file){
+            cloudinary.uploader.upload(
+                req.file.path,{
+                    transformation: [
+                    { width: 485, height: 485, gravity: "face", crop: "fill" }]
+                }
+            ).then((result)=>{
+                superUserCollection.updateOne({_id:userId},{image:result.secure_url}).then(()=>{
+                    res.json({staus:true,message:'successfully updated'})
+                }).catch(()=>{
+                    res.json({staus:false,message:'data base facing issue try later'})
+                })
+            }).catch((err)=>{
+                console.log('----------');
+                console.log(err)
+                console.log('----------');
+             res.json({status:false,message:'cannot upload now to cloudinary'})})
+            
+        }
+        else{
+            res.json({status:false,message:'Select a jpeg format'})
+        }
         
     }
 }

@@ -1,6 +1,8 @@
 import mongoose,  { Document, Schema } from 'mongoose'
 
 interface UserDocument extends Document {
+    name:String,
+    image:String,
     email:String,
     companyName:String,
     password:String,
@@ -8,6 +10,8 @@ interface UserDocument extends Document {
   }
 
 const newSchema=new mongoose.Schema<UserDocument>({//defining structure of collections
+    name:{type:String},
+    image:{type:String},
     email:{type:String,required:true},
     companyName:{type:String,required:true},
     password:{type:String,required:true},
