@@ -20,6 +20,8 @@ const uploadSuperUser = multer({
             callback(null,true)
         }
         else{
+
+          
             callback(null,false)
             // return callback(new Error('only jpg jpeg png and gif file are allowed'))
         }

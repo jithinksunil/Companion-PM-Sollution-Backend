@@ -5,12 +5,13 @@ import { superUserSessionCheck } from '../middlewares/superUser/sessionCheck';
 import { superUserVerifyToken } from '../middlewares/superUser/tokenVerification';
 
 const superUserRouter=express.Router()
-
-superUserRouter.get('/verifyToken',superUserVerifyToken,superUserSessionCheck ,superUseController.verifyToken)
 superUserRouter.post('/signup',superUseController.signUp)
 superUserRouter.post('/login',superUseController.logIn)
-superUserRouter.get('/dashboard',superUserVerifyToken, superUserSessionCheck, superUseController.superUserDashBoard)
-superUserRouter.get('/profile',superUserVerifyToken, superUserSessionCheck, superUseController.superUserProfile)
 superUserRouter.post('/updateimage/:id',uploadSuperUser.single('file'),superUseController.updateImage)
+
+superUserRouter.use(superUserVerifyToken,superUserSessionCheck)
+superUserRouter.get('/verifyToken',superUseController.verifyToken)
+superUserRouter.get('/dashboard', superUseController.superUserDashBoard)
+superUserRouter.get('/profile',superUseController.superUserProfile)
 export default superUserRouter
 
