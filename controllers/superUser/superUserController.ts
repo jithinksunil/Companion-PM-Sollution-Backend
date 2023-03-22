@@ -14,14 +14,13 @@ const superUseController={
     logIn:(req:reqType,res:resType)=>{
         const {email,password}=req.body
 
-        
         superUserCollection.findOne({email}).then((superUser)=>{
             if(superUser){
                 if(password===superUser.password){
                     req.session.superUser=superUser.toObject()//if we does not use toObject user will be having some other filed can only find by comparinf console.log(user);console.log(...user)
                     let superUserData=superUser.toObject()
                     let token=jwt.sign(superUserData,'mySecretKeyForSuperUser', { expiresIn: '1h' })
-                    res.json({verified:true,message:'Succesfully logged in',token})
+                    res.json({verified:true,superUser,message:'Succesfully logged in',token})
                 }else{
                     res.json({verified:false,message:'Wrong email or password'})
                 }
@@ -58,9 +57,7 @@ const superUseController={
                     res.json({staus:false,message:'data base facing issue try later'})
                 })
             }).catch((err)=>{
-                console.log('----------');
-                console.log(err)
-                console.log('----------');
+
              res.json({status:false,message:'cannot upload now to cloudinary'})})
             
         }
