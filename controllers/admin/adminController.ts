@@ -17,7 +17,7 @@ const adminController={
                     req.session.admin=admin.toObject()//if we does not use toObject user will be having some other filed can only find by comparinf console.log(user);console.log(...user)
                     let adminData=admin.toObject()
                     let token=jwt.sign(adminData,'mySecretKeyForAdmin', { expiresIn: '1h' })
-                    res.json({verified:true,message:'Succesfully logged in',token})
+                    res.json({verified:true,admin,message:'Succesfully logged in',token})
                     console.log('ivide ellam ok aanu');
                     
                 }else{

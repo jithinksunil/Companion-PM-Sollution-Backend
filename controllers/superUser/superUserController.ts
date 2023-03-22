@@ -2,18 +2,24 @@ import { reqType,resType } from "../../types/expressTypes"
 import superUserCollection from "../../models/superUserSchema"
 import jwt from 'jsonwebtoken'
 import cloudinary from '../../config/cloudinaryConfig'
+import { newConnectionObject, newConnectionMailObject, mailService } from "../../config/nodeMailer"
+import projectManagerCollection from "../../models/projectManagerSchema"
 
 const superUseController={
     verifyToken:(req:reqType,res:resType)=>{
         res.json({superUserTokenVerified:true})
     },
-    signUp:async (req:reqType,res:resType)=>{//any data can be recieved now so must be validated befor saving to database
-        await superUserCollection.insertMany([req.body])
-        res.json({status:true})
+    signUp:(req:reqType,res:resType)=>{//any data can be recieved now so must be validated befor saving to database
+        superUserCollection.insertMany([req.body]).then(()=>{
+            res.json({status:true})
+        }).catch(()=>{
+            res.json({status:false})
+        })
     },
     logIn:(req:reqType,res:resType)=>{
         const {email,password}=req.body
-
+        console.log('sdhfjhsdjkfhjksdhfjksdjkfhj');
+        
         superUserCollection.findOne({email}).then((superUser)=>{
             if(superUser){
                 if(password===superUser.password){
@@ -37,6 +43,7 @@ const superUseController={
         res.json({superUserTokenVerified:true,superUserData})
     },
     superUserProfile:(req:reqType,res:resType)=>{
+        
         superUserCollection.findOne({_id:req.session.superUser._id}).then((superUserData)=>{
             res.json({superUserTokenVerified:true,superUserData})
         }).catch(()=>{res.json({superUserTokenVerified:true,message:'Cannot fetch data now data base issue'})})
@@ -65,7 +72,40 @@ const superUseController={
             res.json({status:false,message:'Select a jpeg format'})
         }
         
+    },
+    connections:(req:reqType,res:resType)=>{
+        
+    },
+    addConnection:(req:reqType,res:resType)=>{
+        const email=req.body.connection
+        if(email){
+            const {_id,companyName}=req.session.superUser
+            const  connectionObject:connectionType= newConnectionObject(companyName)
+            const {logginUserName,password}=connectionObject
+            const mailOptions=newConnectionMailObject(email,connectionObject)
+            mailService(mailOptions)
+            const newConnectionData={
+                email,
+                companyName,
+                superUserId:_id,
+                logginUserName,
+                password
+            }
+            projectManagerCollection.insertMany([newConnectionData]).then(()=>{
+                res.json({status:true,message:'Connection added successfully'})
+            }).catch(()=>{
+                res.json({status:false,message:'Connection cannot be added right now-database issue'})
+            })
+        }
+        else{
+            res.json({status:false,message:'Invalid email'})
+        }
     }
+}
+
+type connectionType={
+    logginUserName:string,
+    password:number
 }
 
 export default superUseController

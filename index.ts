@@ -36,10 +36,13 @@ import cookieParser from 'cookie-parser'
 app.use(cookieParser());
 
 
-import superUserRouter from './routes/superUserRoutes'
-import adminRouter from './routes/adminRouter'
+import superUserRoutes from './routes/superUserRoutes'
+import adminRoutes from './routes/adminRoutes'
+import projectManagerRoutes from './routes/projectManagerRoutes'
 
-app.use('/',superUserRouter)
-app.use('/admin',adminRouter)
+
+app.use('/projectmanager',projectManagerRoutes)
+app.use('/',superUserRoutes)
+app.use('/admin',adminRoutes)
 app.listen(8000,()=>{console.log('server started');
 })

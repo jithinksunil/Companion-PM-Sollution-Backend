@@ -1,6 +1,6 @@
 import { reqType,resType } from "../../types/expressTypes"
-export const superUserSessionCheck=(req:reqType,res:resType,next:()=>void)=>{
-    if(req.session.superUser){
+export const projectManagerSessionCheck=(req:reqType,res:resType,next:()=>void)=>{
+    if(req.session.projectManager){
         next()
         console.log('session verified');
     }

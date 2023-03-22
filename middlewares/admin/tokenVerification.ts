@@ -7,7 +7,7 @@ export const adminVerifyToken=(req:reqType,res:resType,next:()=>void)=>{
         jwt.verify(adminToken,'mySecretKeyForAdmin',(err,decoded)=>{
             if(err){
                 req.session.destroy()
-                res.json({adminTokenVerified:false})
+                res.json({adminTokenVerified:false,message:'Token verification failed'})
             }else{
                 console.log('Token Verified');
                 next()
@@ -15,6 +15,6 @@ export const adminVerifyToken=(req:reqType,res:resType,next:()=>void)=>{
         })
     }else{
         req.session.destroy()
-        res.json({adminTokenVerified:false})
+        res.json({adminTokenVerified:false,message:'Token verification failed'})
     }
 }

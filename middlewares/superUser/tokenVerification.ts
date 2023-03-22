@@ -9,7 +9,7 @@ export const superUserVerifyToken=(req:reqType,res:resType,next:()=>void)=>{
             if(err){
                 console.log(err);
                 req.session.destroy()
-                res.json({superUserTokenVerified:false})
+                res.json({superUserTokenVerified:false,message:'failed to varify token'})
             }else{
                 console.log('Token Verified')
                 next()
@@ -17,6 +17,6 @@ export const superUserVerifyToken=(req:reqType,res:resType,next:()=>void)=>{
         })
     }else{
         req.session.destroy()
-        res.json({superUserTokenVerified:false})
+        res.json({superUserTokenVerified:false,message:'failed to varify token'})
     }
 }

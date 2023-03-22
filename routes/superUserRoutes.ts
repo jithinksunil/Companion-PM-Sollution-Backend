@@ -13,5 +13,7 @@ superUserRouter.use(superUserVerifyToken,superUserSessionCheck)
 superUserRouter.get('/verifyToken',superUseController.verifyToken)
 superUserRouter.get('/dashboard', superUseController.superUserDashBoard)
 superUserRouter.get('/profile',superUseController.superUserProfile)
+superUserRouter.get('/connections',superUseController.connections)
+superUserRouter.post('/addConnection',superUseController.addConnection)
 export default superUserRouter
 
