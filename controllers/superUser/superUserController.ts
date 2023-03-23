@@ -85,7 +85,6 @@ const superUseController={
             const  connectionObject:connectionType= newConnectionObject(companyName)
             const {logginUserName,password}=connectionObject
             const mailOptions=newConnectionMailObject(email,connectionObject)
-            mailService(mailOptions)
             const newConnectionData={
                 email,
                 companyName,
@@ -93,11 +92,17 @@ const superUseController={
                 logginUserName,
                 password
             }
-            projectManagerCollection.insertMany([newConnectionData]).then(()=>{
-                res.json({status:true,message:'Connection added successfully'})
+            mailService(mailOptions).then(()=>{
+                projectManagerCollection.insertMany([newConnectionData]).then(()=>{
+                    res.json({status:true,message:'Connection added successfully'})
+                }).catch(()=>{
+                    res.json({status:false,message:'Connection cannot be added right now-database issue'})
+                })
             }).catch(()=>{
-                res.json({status:false,message:'Connection cannot be added right now-database issue'})
+                res.json({status:false,message:'Connection cannot be added right, nodemailer issue'})
             })
+            
+            
         }
         else{
             res.json({status:false,message:'Invalid email'})
