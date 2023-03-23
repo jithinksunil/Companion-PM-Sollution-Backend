@@ -8,7 +8,8 @@ const adminController={
         res.json({adminTokenVerified:true})
     },
     logIn:(req:reqType,res:resType)=>{
-        const {email,password}=req.body
+        const password=req.body.password
+        const email=req.body.firstField
         
         
         adminCollection.findOne({email}).then((admin)=>{

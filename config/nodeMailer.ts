@@ -8,10 +8,13 @@ export function otp(){
 }
 
 export function newConnectionObject(companyName:string){
+
     let firstFourLetter=companyName.toUpperCase().substring(0,4)
     let connectionSerial= Math.floor(1000 + Math.random() * 9000)
     let logginUserName=firstFourLetter+connectionSerial+'CMPN'
-    let password=Math.floor(1000 + Math.random() * 9000)
+    const password4Leters = Math.random().toString(36).substring(2,7)
+    let password4Digits=Math.floor(1000 + Math.random() * 9000)
+    const password=password4Leters+password4Digits
     return {logginUserName,password}
 
 }
@@ -28,7 +31,7 @@ export function OtpMailObject(email:string,otpgen:number){
 }
 type connectionType={
     logginUserName:string,
-    password:number
+    password:string
 }
 
 export function newConnectionMailObject(email:string,data:connectionType){

@@ -17,7 +17,9 @@ const superUseController={
         })
     },
     logIn:(req:reqType,res:resType)=>{
-        const {email,password}=req.body
+        const password=req.body.password
+        const email=req.body.firstField
+
         console.log('sdhfjhsdjkfhjksdhfjksdjkfhj');
         
         superUserCollection.findOne({email}).then((superUser)=>{
@@ -105,7 +107,7 @@ const superUseController={
 
 type connectionType={
     logginUserName:string,
-    password:number
+    password:string
 }
 
 export default superUseController

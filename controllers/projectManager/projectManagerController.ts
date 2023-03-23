@@ -15,9 +15,10 @@ const projectManagerController={
         })
     },
     logIn:(req:reqType,res:resType)=>{
+        console.log('ethi tto');
         
         const password=req.body.password
-        const logginUserName=req.body.email
+        const logginUserName=req.body.firstField
 
         projectManagerCollection.findOne({logginUserName}).then((projectManager)=>{
             console.log(projectManager);
