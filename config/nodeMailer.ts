@@ -1,27 +1,27 @@
 import nodemailer from 'nodemailer'
 
-export function otp(){
+export function otp() {
 
-    let otpgen= Math.floor(1000 + Math.random() * 9000)
+    const otpgen = Math.floor(1000 + Math.random() * 9000)
     return otpgen
-    
-}
-
-export function newConnectionObject(companyName:string){
-
-    let firstFourLetter=companyName.toUpperCase().substring(0,4)
-    let connectionSerial= Math.floor(1000 + Math.random() * 9000)
-    let logginUserName=firstFourLetter+connectionSerial+'CMPN'
-    const password4Leters = Math.random().toString(36).substring(2,7)
-    let password4Digits=Math.floor(1000 + Math.random() * 9000)
-    const password=password4Leters+password4Digits
-    return {logginUserName,password}
 
 }
- 
-export function OtpMailObject(email:string,otpgen:number){
 
-    let mailOptions = {
+export function newConnectionObject(companyName : string) {
+
+    const firstFourLetter = companyName.toUpperCase().substring(0, 4)
+    const connectionSerial = Math.floor(1000 + Math.random() * 9000)
+    const logginUserName = firstFourLetter + connectionSerial + 'CMPN'
+    const password4Leters = Math.random().toString(36).substring(2, 7)
+    const password4Digits = Math.floor(1000 + Math.random() * 9000)
+    const password = password4Leters + password4Digits
+    return {logginUserName, password}
+
+}
+
+export function OtpMailObject(email : string, otpgen : number) {
+
+    const mailOptions = {
         from: 'jithinksunil96@gmail.com',
         to: email,
         subject: 'YOUR OTP',
@@ -29,20 +29,24 @@ export function OtpMailObject(email:string,otpgen:number){
     }
     return mailOptions
 }
-type connectionType={
-    logginUserName:string,
-    password:string
+type connectionType = {
+    logginUserName: string,
+    password: string
 }
 
-export function newConnectionMailObject(email:string,data:connectionType){
+export function newConnectionMailObject(email : string, data : connectionType) {
 
-    let mailOptions = {
+    const mailOptions = {
         from: 'jithinksunil96@gmail.com',
         to: email,
         subject: 'Your Login Credentials',
         html: `<p>
-        Your loggin user name:${data.logginUserName}<br>
-        Your Password:${data.password}<br>
+        Your loggin user name:${
+            data.logginUserName
+        }<br>
+        Your Password:${
+            data.password
+        }<br>
         Use the following link to loggin:<br>
         http://localhost:3000/projectmanager/login</p>`
     }
@@ -50,30 +54,29 @@ export function newConnectionMailObject(email:string,data:connectionType){
 }
 
 
-export function mailService(mailOptions:object){
+export function mailService(mailOptions : object) {
 
 
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: 'jithinksunil96@gmail.com',
-            pass: 'nskzhacimzlqfors'  // password from gmail
+            pass: 'nskzhacimzlqfors' // password from gmail
         }
     });
-    const promiseObect=new Promise((resolve,reject)=>{
+    const promiseObect = new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log(error)
-                resolve (error)
+                resolve(error)
             } else {
                 console.log('Email sent: ' + info.response)
-                resolve (info.response)
+                resolve(info.response)
             }
         })
 
     })
 
     return promiseObect
-    
-}
 
+}
