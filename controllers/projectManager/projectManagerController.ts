@@ -2,6 +2,8 @@ import {reqType, resType} from "../../types/expressTypes"
 import jwt from 'jsonwebtoken'
 import cloudinary from '../../config/cloudinaryConfig'
 import projectManagerCollection from "../../models/projectManagerSchema"
+import attendenceCollection from "../../models/AttendeceSchema"
+import mongoose from "mongoose"
 
 const projectManagerController = {
     verifyToken: (req : reqType, res : resType) => {
@@ -81,6 +83,32 @@ const projectManagerController = {
         }
 
     },
+    markAttendence:async (req : reqType, res : resType) => {
+        try{
+            const currentDate = new Date().toJSON().slice(0, 10)
+        const {_id,name}=req.session.projectManager
+
+        const attendeceSheet = await attendenceCollection.findOne({date:currentDate})
+        if(attendeceSheet){
+            const result =await attendenceCollection.findOne({date:currentDate,"attendences._id":_id})
+            if(result){
+                res.json({status: true, message: 'Attendece already marked'})
+            }
+            else{
+                await attendenceCollection.updateOne({date:currentDate},{$push:{attendences:{_id,name}}})
+                res.json({status: true, message: 'Attendece Marked'})
+            }
+            
+        }else{
+            await attendenceCollection.insertMany([{date:currentDate,attendences:[{_id,name}]}])
+            res.json({status: true, message: 'Attendece Marked'})
+        }
+        }
+        catch(err){
+            console.log(err);
+            res.json({status: false, message: 'Attendence cannot be marked now'})
+        }
+    }
 
 }
 

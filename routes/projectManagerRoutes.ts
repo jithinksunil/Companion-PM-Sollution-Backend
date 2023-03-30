@@ -13,4 +13,6 @@ projectManagerRouter.get('/verifyToken',  projectManagerController.verifyToken)
 projectManagerRouter.get('/dashboard',  projectManagerController.projectManagerDashBoard)
 projectManagerRouter.get('/profile',  projectManagerController.projectManagerProfile)
 projectManagerRouter.post('/updateimage', uploadProjectManager.single('file'), projectManagerController.updateImage)
+projectManagerRouter.get('/attendence', projectManagerController.markAttendence)
+
 export default projectManagerRouter
