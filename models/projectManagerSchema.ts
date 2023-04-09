@@ -8,7 +8,8 @@ interface ProjectMangerDocument extends Document {
     superUserId: mongoose.Types.ObjectId,
     logginUserName: string,
     password: string,
-    status: boolean
+    status: boolean,
+    projects:[{project:{type: Schema.Types.ObjectId},status:{type:boolean}}]
 }
 
 const newSchema = new mongoose.Schema<ProjectMangerDocument>({
@@ -21,7 +22,6 @@ const newSchema = new mongoose.Schema<ProjectMangerDocument>({
     },
     email: {
         type: String,
-        required: true
     },
     companyName: {
         type: String,
@@ -33,19 +33,23 @@ const newSchema = new mongoose.Schema<ProjectMangerDocument>({
     },
     logginUserName: {
         type: String,
-        required: true
     },
     password: {
-        type: String,
-        required: true
+        type: String
     },
     status: {
         type: Boolean,
         required: true,
         default: true
-    }
+    },
+    projects:[{
+        _id:{type: Schema.Types.ObjectId},
+        status:{type:Boolean,default:true}
+    }]
 })
 
 const projectManagerCollection = mongoose.model<ProjectMangerDocument>('project_manager_collection', newSchema) // creating collection using the defined schema and assign to new Model
 
 export default projectManagerCollection
+
+

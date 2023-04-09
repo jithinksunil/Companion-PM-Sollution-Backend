@@ -14,7 +14,8 @@ superUserRouter.get('/dashboard', superUserVerifyToken, superUserSessionCheck, s
 superUserRouter.get('/profile', superUserVerifyToken, superUserSessionCheck, superUseController.superUserProfile)
 superUserRouter.post('/updateimage', superUserVerifyToken, superUserSessionCheck,uploadSuperUser.single('file'), superUseController.updateImage)
 superUserRouter.post('/updateprofile', superUserVerifyToken, superUserSessionCheck, superUseController.updateProfile)
-// superUserRouter.get('/connections', superUserVerifyToken, superUserSessionCheck, superUseController.connections)
+superUserRouter.get('/connections', superUserVerifyToken, superUserSessionCheck, superUseController.connections)
+superUserRouter.post('/updateprojectassignment', superUserVerifyToken, superUserSessionCheck, superUseController.updateProjectAssingment)
 superUserRouter.post('/addConnection', superUserVerifyToken, superUserSessionCheck, superUseController.addConnection)
 superUserRouter.post('/paymentcomplete', superUserVerifyToken, superUserSessionCheck, superUseController.paymentComplete)
 

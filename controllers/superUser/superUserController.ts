@@ -4,10 +4,13 @@ import jwt from 'jsonwebtoken'
 import cloudinary from '../../config/cloudinaryConfig'
 import {newConnectionObject, newConnectionMailObject, mailService} from "../../config/nodeMailer"
 import projectManagerCollection from "../../models/projectManagerSchema"
+import projectCollection from "../../models/projectSchema"
+import mongoose from "mongoose"
 
 const superUseController = {
     verifyToken: (req : reqType, res : resType) => {
-        res.json({superUserTokenVerified: true})
+        const superUserData = req.session.superUser
+        res.json({superUserTokenVerified: true,superUserData})
     },
     logout: (req : reqType, res : resType) => {
         req.session.destroy()
@@ -24,13 +27,12 @@ const superUseController = {
         const password = req.body.password
         const email = req.body.firstField
 
-
-        superUserCollection.findOne({email}).then((superUser) => {
-            if (superUser) {
-                if (password === superUser.password) {
-                    req.session.superUser = superUser.toObject() // if we does not use toObject user will be having some other filed can only find by comparinf console.log(user);console.log(...user)
-                    const superUserData = superUser.toObject()
-                    const token = jwt.sign(superUserData, 'mySecretKeyForSuperUser', {expiresIn: '1h'})
+        superUserCollection.findOne({email}).then((superUserData) => {
+            if (superUserData) {
+                if (password === superUserData.password) {
+                    req.session.superUser = superUserData.toObject() // if we does not use toObject user will be having some other filed can only find by comparinf console.log(user);console.log(...user)
+                    const superUser = superUserData.toObject()
+                    const token = jwt.sign(superUser, 'mySecretKeyForSuperUser', {expiresIn: '1h'})
                     res.json({verified: true, superUser, message: 'Succesfully logged in', token})
                 } else {
                     res.json({verified: false, message: 'Wrong email or password'})
@@ -45,8 +47,7 @@ const superUseController = {
 
     },
     superUserDashBoard: (req : reqType, res : resType) => {
-        const superUserData = req.session.superUser
-        res.json({superUserTokenVerified: true, superUserData})
+        res.json({superUserTokenVerified: true})
     },
     superUserProfile: (req : reqType, res : resType) => {
         console.log('reached the pofile section');
@@ -101,6 +102,38 @@ const superUseController = {
             res.json({status:false,message:'Password doesnot matches'})
         }
     },
+    connections: async(req : reqType, res : resType) => {
+        const projectManagers=await projectManagerCollection.aggregate([{$match:{}},{$project:{name:1, projects:1}}])
+        const data:any={}
+        projectManagers.forEach((item)=>{
+            data[item.name]=item.projects
+        })
+        res.json({superUserTokenVerified:true,data})
+        
+    },
+    updateProjectAssingment: async (req : reqType, res : resType) => {
+        try{
+            const {startColumn,dragStartIndex,movingItem,endColumn,dragEnterIndex}=req.body
+        const item={_id:new mongoose.Types.ObjectId(movingItem)}
+        
+        await projectManagerCollection.updateOne({name:startColumn},{$pull:{projects:item}})
+        const projectManager=await projectManagerCollection.findOneAndUpdate({name:endColumn},{$push:{projects:item}})
+        if(projectManager){
+            if(projectManager.name==='unAssingned'){
+                await projectCollection.updateOne({_id:new mongoose.Types.ObjectId(movingItem)},{projectManager:projectManager.name})
+            }
+            else{
+                await projectCollection.updateOne({_id:new mongoose.Types.ObjectId(movingItem)},{projectManager:projectManager._id})
+            }
+        }
+        res.json({status:true,message:'successfully updated'})
+        }
+        catch(err){
+            res.json({status:false,message:'updation failed'})
+        }
+        
+    },
+
     addConnection: (req : reqType, res : resType) => {
         const email = req.body.connection
         if (email) {
@@ -108,8 +141,10 @@ const superUseController = {
             const connectionObject: connectionType = newConnectionObject(companyName)
             const {logginUserName, password} = connectionObject
             const mailOptions = newConnectionMailObject(email, connectionObject)
+            const name=email.split('@')
             const newConnectionData = {
                 email,
+                name:name[0],
                 companyName,
                 superUserId: _id,
                 logginUserName,
@@ -131,12 +166,10 @@ const superUseController = {
         }
     },
     paymentComplete: (req : reqType, res : resType) => {
-        console.log(req.body.plan);
-        console.log(req.session.superUser._id);
         superUserCollection.updateOne({_id:req.session.superUser._id},{$set:{membership:req.body.plan}}).then(()=>{
-            res.json({status:true,message:'Your membership is updated'})
+            res.json({superUserToken:true,status:true,message:'Your membership is updated'})
         }).catch(()=>{
-            res.json({status :false,message:'Cannot update the membership'})
+            res.json({superUserToken:true,status :false,message:'Cannot update the membership'})
         })
     }
 }
