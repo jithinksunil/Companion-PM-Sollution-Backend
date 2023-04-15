@@ -42,12 +42,14 @@ import superUserRoutes from './routes/superUserRoutes'
 import adminRoutes from './routes/adminRoutes'
 import projectManagerRoutes from './routes/projectManagerRoutes'
 import projectRoutes from './routes/projectRoutes'
+import chatRoutes from './routes/chatRoutes'
 
 
 app.use('/', superUserRoutes)
 app.use('/projectmanager', projectManagerRoutes)
 app.use('/admin', adminRoutes)
 app.use('/project', projectRoutes)
+app.use('/chat', chatRoutes)
 app.listen(8000, () => {
     console.log('server started');
 })

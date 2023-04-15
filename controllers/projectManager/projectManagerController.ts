@@ -16,7 +16,7 @@ const projectManagerController = {
             res.json({status: false})
         })
     },
-    logIn: (req : reqType, res : resType) => {
+     logIn: (req : reqType, res : resType) => {
 
         const password = req.body.password
         const logginUserName = req.body.firstField
