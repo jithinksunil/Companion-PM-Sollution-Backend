@@ -6,6 +6,7 @@ import {newConnectionObject, newConnectionMailObject, mailService} from "../../c
 import projectManagerCollection from "../../models/projectManagerSchema"
 import projectCollection from "../../models/projectSchema"
 import mongoose from "mongoose"
+import notificationCollection from "../../models/notificationCollection"
 
 const superUseController = {
     verifyToken: (req : reqType, res : resType) => {
