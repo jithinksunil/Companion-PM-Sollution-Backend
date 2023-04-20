@@ -7,9 +7,25 @@ import { Types } from "mongoose"
 const projectController = {
     projects:async(req : reqType, res : resType) => {
         console.log(req.session.superUser._id);
+        
         projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$project:{name:1}}]).then((projectManagersList)=>{
-            console.log(projectManagersList)
-            projectCollection.find({superUserId:req.session.superUser._id}).then((projectsList)=>{
+            projectCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$lookup:{
+                from:'project_manager_collections',
+                foreignField:'_id',
+                localField:'projectManagerId',
+                as:'projectManagerDetails'
+            }},{$project:{
+                projectManagerName:{$arrayElemAt: ['$projectManagerDetails.name', 0]},
+                name:1,
+                place:1,
+                location:1,
+                budget:1,
+                status:1,
+                progress:1
+            
+            }}]).then((projectsList)=>{
+                console.log(projectsList);
+                
                 const data={projectsList,projectManagersList}
                 res.json({superUserTokenVerified:true,data})
             }).catch(()=>{
@@ -23,7 +39,7 @@ const projectController = {
     createProject: (req : reqType, res : resType) => {
         const {name,place}=req.body
         let {projectManagerId,lati,longi,budget}=req.body
-        const superUserId=req.session.superUser._id
+        const superUserId=new mongoose.Types.ObjectId(req.session.superUser._id)
         lati=parseFloat(lati)
         longi=parseFloat(longi)
         budget=parseFloat(budget)

@@ -5,7 +5,7 @@ import cloudinary from '../../config/cloudinaryConfig'
 import {newConnectionObject, newConnectionMailObject, mailService} from "../../config/nodeMailer"
 import projectManagerCollection from "../../models/projectManagerSchema"
 import projectCollection from "../../models/projectSchema"
-import mongoose from "mongoose"
+import mongoose, { Types } from "mongoose"
 import notificationCollection from "../../models/notificationCollection"
 
 const superUseController = {
@@ -105,7 +105,14 @@ const superUseController = {
         }
     },
     connections: async(req : reqType, res : resType) => {
-        const projectManagers=await projectManagerCollection.aggregate([{$match:{}},{$project:{name:1, projects:1}}])
+        const projectManagers=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},
+            {$lookup:{
+            from:'project_collections',
+            let:{projectIds:'$projects'},
+            pipeline:[{$match:{$expr:{$in:['$_id','$$projecIds']}}}],
+            as:'projectDetails'
+        }}])
+        console.log(projectManagers);
         const data:any={}
         projectManagers.forEach((item)=>{
             data[item.name]=item.projects

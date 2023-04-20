@@ -8,7 +8,7 @@ interface projectDocument extends Document {
     progress:number,
     tasks:[Types.ObjectId],
     projectManagerId:Types.ObjectId|string,
-    superUserId:Types.ObjectId|string,
+    superUserId:Types.ObjectId,
     status:string,
 }
 
@@ -20,7 +20,7 @@ const newSchema = new mongoose.Schema<projectDocument>({ // defining structure o
     progress:{type:Number,default:0},
     tasks:[{type:Schema.Types.ObjectId}],
     projectManagerId:{type: Schema.Types.Mixed ,default:'unAssingned'},
-    superUserId:{type: Schema.Types.Mixed },
+    superUserId:{type: Schema.Types.ObjectId },
     status:{type:String,default:'Not started'},
 })
 
