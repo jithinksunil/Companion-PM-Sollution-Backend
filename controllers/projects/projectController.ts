@@ -2,14 +2,16 @@ import {reqType, resType} from "../../types/expressTypes"
 import projectCollection from "../../models/projectSchema"
 import projectManagerCollection from "../../models/projectManagerSchema"
 import mongoose from "mongoose"
+import { Types } from "mongoose"
 
 const projectController = {
     projects:async(req : reqType, res : resType) => {
-        projectManagerCollection.aggregate([{$match:{}},{$project:{name:1}}]).then((projectManagersList)=>{
-            projectCollection.aggregate([{$match:{}},{$project:{name:1}}]).then((projectsList)=>{
+        console.log(req.session.superUser._id);
+        projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$project:{name:1}}]).then((projectManagersList)=>{
+            console.log(projectManagersList)
+            projectCollection.find({superUserId:req.session.superUser._id}).then((projectsList)=>{
                 const data={projectsList,projectManagersList}
                 res.json({superUserTokenVerified:true,data})
-                console.log('ivided ethi tto');
             }).catch(()=>{
                 res.json({superUserTokenVerified:true,message:'Cannot get details now '})
             })
@@ -18,24 +20,24 @@ const projectController = {
         })
         
      },
-    createProject:(req : reqType, res : resType) => {
-        const {name}=req.body
-        let {projectManager}=req.body
-        let {lati,longi}=req.body
+    createProject: (req : reqType, res : resType) => {
+        const {name,place}=req.body
+        let {projectManagerId,lati,longi,budget}=req.body
+        const superUserId=req.session.superUser._id
         lati=parseFloat(lati)
         longi=parseFloat(longi)
-        if(projectManager===undefined){
-            projectManager='unAssingned'
+        budget=parseFloat(budget)
+        if(projectManagerId===undefined){
+            projectManagerId='unAssingned'
         }
-        else if(projectManager!=='unAssingned'){
-            projectManager=new mongoose.Types.ObjectId(projectManager)
+        else if(projectManagerId!=='unAssingned'){
+            projectManagerId=new mongoose.Types.ObjectId(projectManagerId)
         }
         
-        projectCollection.insertMany([{name,location:{lati,longi},projectManager}]).then((data)=>{
-            if(projectManager!=='unAssingned'){
-                projectManagerCollection.updateOne({_id:data[0].projectManager},{$push:{projects:{_id:data[0]._id}}}).then(()=>{
+        projectCollection.insertMany([{name,place,budget,location:{lati,longi},projectManagerId,superUserId}]).then((data)=>{
+            if(projectManagerId!=='unAssingned'){
+                projectManagerCollection.updateOne({_id:data[0].projectManagerId},{$push:{projects:{_id:data[0]._id}}}).then(()=>{
                     res.json({superUserTokenVerified:true,status:true,message:'Project added'})
-
                     
                 }).catch(()=>{
                     res.json({superUserTokenVerified:true,status:false,message:'not updated in projectmanager'})

@@ -14,5 +14,6 @@ projectManagerRouter.get('/dashboard',  projectManagerController.projectManagerD
 projectManagerRouter.get('/profile',  projectManagerController.projectManagerProfile)
 projectManagerRouter.post('/updateimage', uploadProjectManager.single('file'), projectManagerController.updateImage)
 projectManagerRouter.get('/attendence', projectManagerController.markAttendence)
+projectManagerRouter.post('/updateprofile', projectManagerController.updateProfile)
 
 export default projectManagerRouter

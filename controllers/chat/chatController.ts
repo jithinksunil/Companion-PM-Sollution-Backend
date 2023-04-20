@@ -4,19 +4,29 @@ import mongoose from "mongoose"
 import superUserCollection from "../../models/superUserSchema"
 import conversationCollection from "../../models/conversationShema"
 import messageCollection from "../../models/messageShema"
+import siteEngineerCollection from "../../models/siteEngineerSchema"
 
 const chatController = {
     connnectionList: (req : reqType, res : resType) => {
         const superUserId=req.body.superUserId
-        let connections=[]
+        let connections:any[]=[]
         projectManagerCollection.find({superUserId:new mongoose.Types.ObjectId(superUserId)}).then((projectManagers)=>{
             connections=projectManagers
-            superUserCollection.find({_id:new mongoose.Types.ObjectId(superUserId)}).then((superUsers)=>{
-                connections=[...projectManagers,...superUsers]
-                res.json({connections})
+            
+            siteEngineerCollection.find({superUserId:new mongoose.Types.ObjectId(superUserId)}).then((siteEngineers)=>{
+                connections=[...connections,...siteEngineers]
+                
+                superUserCollection.findOne({_id:new mongoose.Types.ObjectId(superUserId)}).then((superUser)=>{
+                    connections=[...connections,superUser]
+                    res.json({connections})
+                    
+                }).catch(()=>{
+                    res.json({message:'issues faced in data base while fetching connections'})
+                })
             }).catch(()=>{
                 res.json({message:'issues faced in data base while fetching connections'})
             })
+            
         }).catch(()=>{
             res.json({message:'issues faced in data base while fetching connections'})
         })

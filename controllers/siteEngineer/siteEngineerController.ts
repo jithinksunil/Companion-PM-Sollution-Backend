@@ -1,60 +1,59 @@
 import {reqType, resType} from "../../types/expressTypes"
 import jwt from 'jsonwebtoken'
 import cloudinary from '../../config/cloudinaryConfig'
-import projectManagerCollection from "../../models/projectManagerSchema"
+import siteEngineerCollection from "../../models/siteEngineerSchema"
 import attendenceCollection from "../../models/AttendeceSchema"
-import mongoose from "mongoose"
+import projectCollection from "../../models/projectSchema"
 
-const projectManagerController = {
+const siteEngineerController = {
     verifyToken: (req : reqType, res : resType) => {
-        res.json({projectManagerTokenVerified: true})
-    },
-    signUp: (req : reqType, res : resType) => { // any data can be recieved now so must be validated befor saving to database
-        projectManagerCollection.insertMany([req.body]).then(() => {
-            res.json({status: true})
-        }).catch(() => {
-            res.json({status: false})
-        })
+        res.json({siteEngineerTokenVerified: true})
     },
      logIn: (req : reqType, res : resType) => {
 
         const password = req.body.password
         const logginUserName = req.body.firstField
 
-        projectManagerCollection.findOne({logginUserName}).then((projectManager) => {
+        siteEngineerCollection.findOne({logginUserName}).then((siteEngineer) => {
 
-            if (projectManager) {
-                if (password === projectManager.password) {
-                    req.session.projectManager = projectManager.toObject() // if we does not use toObject user will be having some other filed can only find by comparinf console.log(user);console.log(...user)
-                    const projectManagerData = projectManager.toObject()
-                    const token = jwt.sign(projectManagerData, 'mySecretKeyForProjectManager', {expiresIn: '1h'})
-                    res.json({verified: true, data:projectManager, message: 'Succesfully logged in', token})
+            if (siteEngineer) {
+                if (password === siteEngineer.password) {
+                    req.session.siteEngineer = siteEngineer.toObject() // if we does not use toObject user will be having some other filed can only find by comparinf console.log(user);console.log(...user)
+                    const siteEngineerData = siteEngineer.toObject()
+                    const token = jwt.sign(siteEngineerData, 'mySecretKeyForSiteEngineer', {expiresIn: '1h'})
+                    res.json({verified: true, data:siteEngineer, message: 'Succesfully logged in', token})
                 } else {
                     res.json({verified: false, message: 'Wrong email or password'})
                 }
             } else {
                 res.json({verified: false, message: 'User does not exist'})
             }
-        }).catch((reject : Error) => {
-            console.log(reject)
+        }).catch(() => {
             res.json({verified: false, message: 'Sorry for Interuption ,Database facing issues'})
         })
 
     },
-    projectManagerDashBoard: (req : reqType, res : resType) => {
-        const projectManagerData = req.session.projectManager
-        res.json({projectManagerTokenVerified: true, projectManagerData})
+    siteEngineerDashBoard: (req : reqType, res : resType) => {
+        const siteEngineerData = req.session.siteEngineer
+        res.json({siteEngineerTokenVerified: true, data:siteEngineerData})
     },
-    projectManagerProfile: (req : reqType, res : resType) => {
+    project: (req : reqType, res : resType) => {
+        projectCollection.findOne({_id:req.session.siteEngineer.projectId}).then((project)=>{
+            res.json({siteEngineerTokenVerified:true,data:project})
+        }).catch(()=>{
+            res.json({siteEngineerTokenVerified:true,message:'cannot fetch project details from the database now'})
+        })
+    },
+    siteEngineerProfile: (req : reqType, res : resType) => {
 
-        projectManagerCollection.findOne({_id: req.session.projectManager._id}).then((projectManagerData) => {
-            res.json({projectManagerTokenVerified: true,data: projectManagerData})
+        siteEngineerCollection.findOne({_id: req.session.siteEngineer._id}).then((siteEngineerData) => {
+            res.json({siteEngineerTokenVerified: true, data: siteEngineerData})
         }).catch(() => {
-            res.json({projectManagerTokenVerified: true, message: 'Cannot fetch data now data base issue'})
+            res.json({siteEngineerTokenVerified: true, message: 'Cannot fetch data now data base issue'})
         })
     },
     updateImage: (req : reqType, res : resType) => {
-        const userId = req.session.projectManager._id
+        const userId = req.session.siteEngineer._id
         if (req.file) {
             cloudinary.uploader.upload(req.file.path, {
                 transformation: [
@@ -66,7 +65,7 @@ const projectManagerController = {
                     }
                 ]
             }).then((result) => {
-                projectManagerCollection.updateOne({
+                siteEngineerCollection.updateOne({
                     _id: userId
                 }, {image: result.secure_url}).then(() => {
                     res.json({staus: true, message: 'successfully updated'})
@@ -86,7 +85,7 @@ const projectManagerController = {
     markAttendence:async (req : reqType, res : resType) => {
         try{
             const currentDate = new Date().toJSON().slice(0, 10)
-        const {_id,name}=req.session.projectManager
+        const {_id,name}=req.session.siteEngineer
 
         const attendeceSheet = await attendenceCollection.findOne({date:currentDate})
         if(attendeceSheet){
@@ -111,10 +110,11 @@ const projectManagerController = {
     },
     updateProfile: (req : reqType, res : resType) => {
         const  {name,email,companyName,password}=req.body
-        if(req.session.projectManager.password===password){
-            projectManagerCollection.findOneAndUpdate({_id:req.session.projectManager._id},{$set:{name,email,companyName}},{ returnOriginal: false }).then((projectManager)=>{
+        if(req.session.siteEngineer.password===password){
+            siteEngineerCollection.findOneAndUpdate({_id:req.session.siteEngineer._id},{$set:{name,email,companyName}},{ returnOriginal: false }).then((siteEngineer)=>{
+                console.log(siteEngineer);
                 
-                res.json({status:true,message:'Succesfully updated',data:projectManager})
+                res.json({status:true,message:'Succesfully updated',data:siteEngineer})
             }).catch(()=>{
                 res.json({status:false,message:'Cannot update database facing issues'})
             })
@@ -126,9 +126,5 @@ const projectManagerController = {
 
 }
 
-type connectionType = {
-    logginUserName: string,
-    password: number
-}
 
-export default projectManagerController
+export default siteEngineerController

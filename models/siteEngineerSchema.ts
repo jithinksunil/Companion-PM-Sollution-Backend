@@ -1,19 +1,19 @@
 import mongoose, {Document, Schema} from 'mongoose'
 
-interface ProjectMangerDocument extends Document {
+interface siteEngineerDocument extends Document {
     name: string,
     image: string,
     email: string,
     companyName: string,
-    superUserId: mongoose.Types.ObjectId,
+    superUserId: Schema.Types.ObjectId,
     logginUserName: string,
     password: string,
     status: boolean,
-    projects:[{project:{type: Schema.Types.ObjectId},status:{type:boolean}}],
+    projectId:Schema.Types.ObjectId,
     position:string
 }
 
-const newSchema = new mongoose.Schema<ProjectMangerDocument>({
+const newSchema = new mongoose.Schema<siteEngineerDocument>({
     // defining structure of collections
     name: {
         type: String
@@ -43,15 +43,14 @@ const newSchema = new mongoose.Schema<ProjectMangerDocument>({
         required: true,
         default: true
     },
-    projects:[{
-        _id:{type: Schema.Types.ObjectId},
-        status:{type:Boolean,default:true}
-    }],
-    position:{type:String,default:"projectManager"}
+    projectId:{
+        type: Schema.Types.ObjectId
+    },
+    position:{type:String,default:"siteEngineer"}
 })
 
-const projectManagerCollection = mongoose.model<ProjectMangerDocument>('project_manager_collection', newSchema) // creating collection using the defined schema and assign to new Model
+const siteEngineerCollection = mongoose.model<siteEngineerDocument>('site_engineer_collection', newSchema) // creating collection using the defined schema and assign to new Model
 
-export default projectManagerCollection
+export default siteEngineerCollection
 
 

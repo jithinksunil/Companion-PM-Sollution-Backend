@@ -34,7 +34,7 @@ const superUseController = {
                     req.session.superUser = superUserData.toObject() // if we does not use toObject user will be having some other filed can only find by comparinf console.log(user);console.log(...user)
                     const superUser = superUserData.toObject()
                     const token = jwt.sign(superUser, 'mySecretKeyForSuperUser', {expiresIn: '1h'})
-                    res.json({verified: true, superUser, message: 'Succesfully logged in', token})
+                    res.json({verified: true,data: superUser, message: 'Succesfully logged in', token})
                 } else {
                     res.json({verified: false, message: 'Wrong email or password'})
                 }
@@ -54,7 +54,7 @@ const superUseController = {
         console.log('reached the pofile section');
         
         superUserCollection.findOne({_id: req.session.superUser._id}).then((superUserData) => {
-            res.json({superUserTokenVerified: true, superUserData})
+            res.json({superUserTokenVerified: true, data: superUserData})
         }).catch(() => {
             res.json({superUserTokenVerified: true, message: 'Cannot fetch data now data base issue'})
         })
@@ -93,8 +93,9 @@ const superUseController = {
     updateProfile:(req : reqType, res : resType) => {
         const  {name,email,companyName,password}=req.body
         if(req.session.superUser.password===password){
-            superUserCollection.updateOne({_id:req.session.superUser._id},{$set:{name,email,companyName}}).then(()=>{
-                res.json({status:true,message:'Succesfully updated'})
+            superUserCollection.findOneAndUpdate({_id:req.session.superUser._id},{$set:{name,email,companyName}},{ returnOriginal: false }).then((superUser)=>{
+                
+                res.json({status:true,message:'Succesfully updated',data:superUser})
             }).catch(()=>{
                 res.json({status:false,message:'Cannot update database facing issues'})
             })

@@ -1,4 +1,4 @@
-import mongoose, {Document, Schema} from 'mongoose'
+import mongoose, { Document } from 'mongoose'
 
 interface UserDocument extends Document {
     name: string,
@@ -7,7 +7,8 @@ interface UserDocument extends Document {
     companyName: string,
     password: string,
     status: boolean,
-    membership:string
+    membership:string,
+    position:string
 }
 
 const newSchema = new mongoose.Schema<UserDocument>({
@@ -39,7 +40,8 @@ const newSchema = new mongoose.Schema<UserDocument>({
         type: String,
         required: true,
         default: 'Free'
-    }
+    },
+    position:{type:String,default:"superUser"}
 })
 
 const superUserCollection = mongoose.model<UserDocument>('super_user_collection', newSchema) // creating collection using the defined schema and assign to new Model

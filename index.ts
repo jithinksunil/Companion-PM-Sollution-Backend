@@ -41,6 +41,7 @@ app.use(cookieParser());
 import superUserRoutes from './routes/superUserRoutes'
 import adminRoutes from './routes/adminRoutes'
 import projectManagerRoutes from './routes/projectManagerRoutes'
+import siteEngineerRoutes from './routes/siteEngineerRoutes'
 import projectRoutes from './routes/projectRoutes'
 import chatRoutes from './routes/chatRoutes'
 import notificationRoutes from './routes/notificationRoutes'
@@ -48,6 +49,7 @@ import notificationRoutes from './routes/notificationRoutes'
 
 app.use('/', superUserRoutes)
 app.use('/projectmanager', projectManagerRoutes)
+app.use('/siteengineer', siteEngineerRoutes)
 app.use('/admin', adminRoutes)
 app.use('/project', projectRoutes)
 app.use('/chat', chatRoutes)
