@@ -21,7 +21,8 @@ const projectController = {
                 location:1,
                 budget:1,
                 status:1,
-                progress:1
+                progress:1,
+                projectManagerId:1
             
             }}]).then((projectsList)=>{
                 console.log(projectsList);

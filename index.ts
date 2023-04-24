@@ -45,6 +45,7 @@ import siteEngineerRoutes from './routes/siteEngineerRoutes'
 import projectRoutes from './routes/projectRoutes'
 import chatRoutes from './routes/chatRoutes'
 import notificationRoutes from './routes/notificationRoutes'
+import taskRoutes from './routes/taskRoutes'
 
 
 app.use('/', superUserRoutes)
@@ -54,6 +55,7 @@ app.use('/admin', adminRoutes)
 app.use('/project', projectRoutes)
 app.use('/chat', chatRoutes)
 app.use('/notification', notificationRoutes)
+app.use('/task', taskRoutes)
 app.listen(8000, () => {
     console.log('server started');
 })

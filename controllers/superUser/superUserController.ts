@@ -108,14 +108,13 @@ const superUseController = {
         const projectManagers=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},
             {$lookup:{
             from:'project_collections',
-            let:{projectIds:'$projects'},
-            pipeline:[{$match:{$expr:{$in:['$_id','$$projecIds']}}}],
-            as:'projectDetails'
+            let:{project:'$projects'},
+            pipeline:[{$match:{$expr:{$in:['$_id','$$project._id']}}}],
+            as:'projectsDetail'
         }}])
-        console.log(projectManagers);
         const data:any={}
         projectManagers.forEach((item)=>{
-            data[item.name]=item.projects
+            data[item.name]=item.projectsDetail
         })
         res.json({superUserTokenVerified:true,data})
         

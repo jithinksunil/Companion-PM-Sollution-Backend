@@ -1,4 +1,5 @@
 import mongoose, {Document, Schema} from 'mongoose'
+import { Types } from 'mongoose'
 
 interface siteEngineerDocument extends Document {
     name: string,
@@ -9,7 +10,7 @@ interface siteEngineerDocument extends Document {
     logginUserName: string,
     password: string,
     status: boolean,
-    projectId:Schema.Types.ObjectId,
+    projects:[{projectId:Types.ObjectId,tasks:[Types.ObjectId]}],
     position:string
 }
 
@@ -43,9 +44,10 @@ const newSchema = new mongoose.Schema<siteEngineerDocument>({
         required: true,
         default: true
     },
-    projectId:{
-        type: Schema.Types.ObjectId
-    },
+    projects:[{
+        projectId:Schema.Types.ObjectId,
+        tasks:[Schema.Types.ObjectId]
+    }],
     position:{type:String,default:"siteEngineer"}
 })
 
