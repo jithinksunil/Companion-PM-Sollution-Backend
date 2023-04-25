@@ -7,51 +7,29 @@ const taskController =  {
 
     tasks: async(req : reqType, res : resType) => {
 
-        projectCollection.aggregate([{$match:{"projectManagers.projectManagerId":new Types.ObjectId(req.session.projectManager._id),"projectManagers.status":true}},{$lookup:
+        projectCollection.aggregate([{$match:{"projectManagers.projectManagerId":new Types.ObjectId("6432c532dbb5f581e099ea37"),"projectManagers.status":true}},{$lookup:
             {
                 from:"site_engineer_collections",
-                let:{siteEngineer:"$siteEngineers.siteEngineerId"},
-                pipeline:[
-                    {$match:{$expr:{$in:["$_id","$$siteEngineer"]}}},
-                    {$unwind:"$projects"},
-                    {$lookup:{
-
-                        from:"task_collections",
-                        let:{task:"$projects.tasks"},
-                        pipeline:[
-
-                            {$match:{
-                                $expr:{
-                                    $and:[
-
-                                        { $in: ["$_id", "$$task"] },
-                                        { $eq: ["$status", true] }
-                                        ]
-                                    }
-                                }
-                            }
-                        ],
-                        as:"taskDetails"
-                        }
-                    },
-                    {$match:{"projects.projectId":new Types.ObjectId(req.session.projectManager._id)}},
-                    {$group:{
-                        _id:{
-                            siteEngineerId:"$_id",
-                            name:"$name"
-                        },
-                        tasks:{
-                            $push:{
-                                projectId:"$projects.projectId",
-                                tasks:"$taskDetails"
-                            }
-                        }
-                    }},
-                    {$project:{siteEngineerId:"$_id.siteEngineerId",name:"$_id.name",_id:0,tasks:{$arrayElemAt: ["$tasks.tasks", 0]}}}
-                ],
+                localField:"_id",
+                foreignField:"projects.projectId",
                 as:"onDutySiteEngineers"
             
-            }},{$project:{projectId:"$_id",_id:0, name:1,onDutySiteEngineers:1}}]).then((tasks:any)=>{
+            }},{
+                $addFields: {
+                  siteEngineers: {
+                    $filter: {
+                      input: "$onDutySiteEngineers",
+                      cond: {
+                        $eq: ["$$this.projects.projectId", "$_id"],
+                        $eq: ["$$this.projects.status", true]
+                      }
+                    }
+                  }
+                }
+              }]).then((tasks:any)=>{
+                console.log(tasks);
+                console.log(tasks[0].onDutySiteEngineers);
+                
                 const data=[...tasks]
                 data.forEach((item:any)=>{
                     const onDutySiteEngineers:any={}

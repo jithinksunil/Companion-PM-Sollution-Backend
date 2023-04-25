@@ -9,7 +9,6 @@ interface ProjectMangerDocument extends Document {
     logginUserName: string,
     password: string,
     status: boolean,
-    projects:[{project:{type: Schema.Types.ObjectId},status:{type:boolean}}],
     position:string
 }
 
@@ -43,10 +42,6 @@ const newSchema = new mongoose.Schema<ProjectMangerDocument>({
         required: true,
         default: true
     },
-    projects:[{
-        _id:{type: Schema.Types.ObjectId},
-        status:{type:Boolean,default:true}
-    }],
     position:{type:String,default:"projectManager"}
 })
 
