@@ -106,8 +106,9 @@ const superUseController = {
         }
     },
     connections: async(req : reqType, res : resType) => {
-        
-        const projectManagers=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId("641ac782d8e5e40347a311c7")}},
+
+        const superUserId=new Types.ObjectId(req.session.superUser._id)
+        const projectManagers=await projectManagerCollection.aggregate([{$match:{superUserId}},
             {$lookup:{
             from:'project_collections',
             let:{projectManagerId:'$_id'},
@@ -167,6 +168,8 @@ const superUseController = {
     addConnection: (req : reqType, res : resType) => {
         const email = req.body.connection
         const position = req.body.designation
+        console.log(req.body)
+        
         if (email&&position) {
             const {_id, companyName} = req.session.superUser
             const connectionObject: connectionType = newConnectionObject(companyName)

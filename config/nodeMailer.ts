@@ -22,7 +22,7 @@ export function newConnectionObject(companyName : string) {
 export function OtpMailObject(email : string, otpgen : number) {
 
     const mailOptions = {
-        from: 'jithinksunil96@gmail.com',
+        from: process.env.NODE_MAILER_EMAIL,
         to: email,
         subject: 'YOUR OTP',
         html: `<p>${otpgen}</p>`
@@ -37,7 +37,7 @@ type connectionType = {
 export function newConnectionMailObject(email : string, data : connectionType) {
 
     const mailOptions = {
-        from: 'jithinksunil96@gmail.com',
+        from: process.env.NODE_MAILER_EMAIL,
         to: email,
         subject: 'Your Login Credentials',
         html: `<p>
@@ -48,7 +48,7 @@ export function newConnectionMailObject(email : string, data : connectionType) {
             data.password
         }<br>
         Use the following link to loggin:<br>
-        http://localhost:3000/projectmanager/login</p>`
+        ${process.env.CORS_LINK}/projectmanager/login</p>`
     }
     return mailOptions
 }
@@ -60,8 +60,8 @@ export function mailService(mailOptions : object) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'jithinksunil96@gmail.com',
-            pass: 'nskzhacimzlqfors' // password from gmail
+            user: process.env.NODE_MAILER_EMAIL,
+            pass: process.env.NODE_MAILER_CONFIG_PASSWORD // password from gmail
         }
     });
     const promiseObect = new Promise((resolve, reject) => {

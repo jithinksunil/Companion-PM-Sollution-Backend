@@ -1,14 +1,14 @@
 import express from 'express'
 const app = express()
+import dotenv from 'dotenv'
+dotenv.config()//will convert the .env file into an object
 
 import mongodb from './config/mongoos'
 mongodb()
 
 import cors from 'cors'
 app.use(cors({
-    origin: [
-        "http://localhost:3000", "http://localhost:3001"
-    ],
+    origin: [process.env.CORS_LINK as string],
     methods: [
         "GET",
         "POST",
@@ -56,14 +56,14 @@ app.use('/project', projectRoutes)
 app.use('/chat', chatRoutes)
 app.use('/notification', notificationRoutes)
 app.use('/task', taskRoutes)
-app.listen(8000, () => {
+app.listen(process.env.PORT , () => {
     console.log('server started');
 })
 
 import { Server } from 'socket.io';
-const io=new Server(8001,{
+const io=new Server( 8001 ,{
     cors:{
-        origin:['http://localhost:3000','http://localhost:3001']
+        origin:[process.env.CORS_LINK as string]
     }
 })
 
