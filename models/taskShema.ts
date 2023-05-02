@@ -3,14 +3,14 @@ import mongoose, { Document, Schema, Types} from 'mongoose'
 interface taskDocument extends Document {
     projectId:Types.ObjectId,
     siteEngineers:[{siteEngineerId:Types.ObjectId|string,status:boolean}],
-    task:string,
+    name:string,
     status:string,
     progress:number
 }
 const newSchema = new mongoose.Schema<taskDocument>({
     projectId:Types.ObjectId,
     siteEngineers:[{siteEngineerId:Schema.Types.Mixed,status:{type:Boolean,default:true}}],
-    task:String,
+    name:String,
     status:String,
     progress:Number,
 },{timestamps:true})

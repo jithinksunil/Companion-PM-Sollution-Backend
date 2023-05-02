@@ -6,86 +6,77 @@ import { Types } from "mongoose"
 
 const projectController = {
     projects:async(req : reqType, res : resType) => {
-        console.log(req.session.superUser._id);
+        try{
+        let {search} = req.query
+        if (!search){
+            search = ''
+        } 
+
         
-        projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$project:{name:1}}]).then((projectManagersList)=>{
-            projectCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$lookup:{
+        let projectManagersList=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$project:{name:1}}])
+        
+        const unAssignedProjectManager=projectManagersList.find((item)=>item.name==="unAssigned")
+            
+        if(!unAssignedProjectManager){
+            await projectManagerCollection.insertMany([{name:"unAssigned",superUserId:new Types.ObjectId(req.session.superUser._id)}])
+            projectManagersList=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$project:{name:1}}])
+
+        }
+
+        const projectsList=await projectCollection.aggregate([{$match:{$and:[{superUserId:new Types.ObjectId(req.session.superUser._id)},{$or:[{name:{
+            $regex: search,
+            $options: 'i'
+        }},{place:{
+            $regex: search,
+            $options: 'i'
+        }}]}]}},{$unwind:"$projectManagers"},{$match:{"projectManagers.status":true}},{$lookup:{
                 from:'project_manager_collections',
                 foreignField:'_id',
-                localField:'projectManagerId',
-                as:'projectManagerDetails'
+                localField:'projectManagers.projectManagerId',
+                as:'projectManager'
             }},{$project:{
-                projectManagerName:{$arrayElemAt: ['$projectManagerDetails.name', 0]},
+                projectManagerName:'$projectManager.name',
                 name:1,
                 place:1,
                 location:1,
                 budget:1,
                 status:1,
                 progress:1,
-                projectManagerId:1
             
-            }}]).then((projectsList)=>{
-                console.log(projectsList);
-                
+            }}])
                 const data={projectsList,projectManagersList}
                 res.json({superUserTokenVerified:true,data})
-            }).catch(()=>{
+        }catch(err){
                 res.json({superUserTokenVerified:true,message:'Cannot get details now '})
-            })
-        }).catch(()=>{
-            res.json({superUserTokenVerified:true,message:'Cannot get details now '})
-        })
-        
+                console.log(err);
+                
+            }
      },
-    createProject: (req : reqType, res : resType) => {
+    createProject: async (req : reqType, res : resType) => {
+        try{
         const {name,place}=req.body
         let {projectManagerId,lati,longi,budget}=req.body
-        const superUserId=new mongoose.Types.ObjectId(req.session.superUser._id)
+        console.log(projectManagerId);
+        if(!projectManagerId||projectManagerId=="unAssigned"){
+            const unAssignedPm=await projectManagerCollection.findOne({name:"unAssigned"})
+                console.log(unAssignedPm);
+                projectManagerId=unAssignedPm?.toObject()._id
+        }else{
+            projectManagerId=new Types.ObjectId(projectManagerId)
+        }
+        
+        const superUserId=new Types.ObjectId(req.session.superUser._id)
         lati=parseFloat(lati)
         longi=parseFloat(longi)
         budget=parseFloat(budget)
-        if(projectManagerId===undefined){
-            projectManagerId='unAssingned'
-        }
-        else if(projectManagerId!=='unAssingned'){
-            projectManagerId=new mongoose.Types.ObjectId(projectManagerId)
-        }
+        console.log(projectManagerId);
         
-        projectCollection.insertMany([{name,place,budget,location:{lati,longi},projectManagerId,superUserId}]).then((data)=>{
-            if(projectManagerId!=='unAssingned'){
-                projectManagerCollection.updateOne({_id:data[0].projectManagerId},{$push:{projects:{_id:data[0]._id}}}).then(()=>{
-                    res.json({superUserTokenVerified:true,status:true,message:'Project added'})
-                    
-                }).catch(()=>{
-                    res.json({superUserTokenVerified:true,status:false,message:'not updated in projectmanager'})
-                })
-            }
-            else{
-                projectManagerCollection.findOne({name:'unAssingned'}).then((result)=>{
-                    if(result){
-                        projectManagerCollection.updateOne({name:'unAssingned'},{$push:{projects:{_id:data[0]._id}}}).then(()=>{
-                            res.json({superUserTokenVerified:true,status:true,message:'Project added'})
-                            console.log('ellam ok aanyu');
-                            
-                        }).catch(()=>{
-                            res.json({superUserTokenVerified:true,status:false,message:'not updated in projectmanager'})
-                        })
-                    }else{
-                        const {_id, companyName} = req.session.superUser
-                        projectManagerCollection.insertMany([{name:'unAssingned',companyName,superUserId:_id,projects:[{_id:data[0]._id}]}]).then(() => {
-                            res.json({superUserTokenVerified:true,status:true,message:'Project added'})
-                        }).catch(() => {
-                            res.json({status: false, message: 'Connection cannot be added right now-database issue'})
-                        })
-                    }
-                })
-            }
-            
-        }).catch((err)=>{
+        await projectCollection.insertMany([{name,place,budget,location:{lati,longi},projectManagers:[{projectManagerId,status:true}],superUserId}])
+            res.json({superUserTokenVerified:true,status:true,message:'Project added'})
+        }catch(err){
             console.log(err);
             res.json({superUserTokenVerified:true,status:false,message:'Project cannotbe added to data base right now'}) 
-            console.log(3);
-        })
+        }
     }
 
 }

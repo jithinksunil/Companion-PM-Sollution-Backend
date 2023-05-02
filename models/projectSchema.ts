@@ -6,8 +6,8 @@ interface projectDocument extends Document {
     place:string,
     budget:number,
     progress:number,
-    projectManagers:[{projectManagerId:Types.ObjectId,status:boolean}],
-    superUserId:Types.ObjectId,
+    projectManagers:[{projectManagerId:Types.ObjectId ,status:boolean}],
+    superUserId:Types.ObjectId
     status:string,
 }
 

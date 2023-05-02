@@ -25,7 +25,6 @@ const newSchema = new mongoose.Schema<ProjectMangerDocument>({
     },
     companyName: {
         type: String,
-        required: true
     },
     superUserId: {
         type: Schema.Types.ObjectId,

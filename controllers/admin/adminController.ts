@@ -45,11 +45,6 @@ const adminController = {
         let {search} = req.query
         if (!search) 
             search = ''
-
-
-        
-
-
         superUserCollection.find({
             $or: [
                 {

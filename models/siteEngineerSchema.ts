@@ -11,6 +11,7 @@ interface siteEngineerDocument extends Document {
     password: string,
     status: boolean,
     projects:[{projectId:Types.ObjectId, status:boolean}],
+    currentTaskOrder:[Types.ObjectId],
     position:string
 }
 
@@ -48,6 +49,7 @@ const newSchema = new mongoose.Schema<siteEngineerDocument>({
         projectId:Schema.Types.ObjectId,
         status:Boolean
     }],
+    currentTaskOrder:{type:[Schema.Types.ObjectId],default:[ ]},
     position:{type:String,default:"siteEngineer"}
 })
 

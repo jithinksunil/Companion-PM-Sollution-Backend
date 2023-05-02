@@ -7,6 +7,7 @@ import projectManagerCollection from "../../models/projectManagerSchema"
 import projectCollection from "../../models/projectSchema"
 import mongoose, { Types } from "mongoose"
 import notificationCollection from "../../models/notificationCollection"
+import siteEngineerCollection from "../../models/siteEngineerSchema"
 
 const superUseController = {
     verifyToken: (req : reqType, res : resType) => {
@@ -105,36 +106,57 @@ const superUseController = {
         }
     },
     connections: async(req : reqType, res : resType) => {
-        const projectManagers=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},
+        
+        const projectManagers=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId("641ac782d8e5e40347a311c7")}},
             {$lookup:{
             from:'project_collections',
-            let:{project:'$projects'},
-            pipeline:[{$match:{$expr:{$in:['$_id','$$project._id']}}}],
-            as:'projectsDetail'
+            let:{projectManagerId:'$_id'},
+            pipeline:[{$match:{$expr:{$in:['$$projectManagerId','$projectManagers.projectManagerId']}}},{$project:{name:1,projectManagers:{$filter:{
+                input:"$projectManagers",
+                as:"pm",
+                cond:{
+                    $and:[{$eq:["$$pm.projectManagerId","$$projectManagerId"]},
+                    {$eq:["$$pm.status",true]}]
+                }
+            }}}},{
+                $match:{"projectManagers.status":true}
+            }
+                ],
+            as:'projects'
         }}])
+        
         const data:any={}
         projectManagers.forEach((item)=>{
-            data[item.name]=item.projectsDetail
+            data[item.name]=item.projects
         })
-        res.json({superUserTokenVerified:true,data})
+
+        const message=req.query.message
+        res.json({superUserTokenVerified:true,data,message})
         
     },
     updateProjectAssingment: async (req : reqType, res : resType) => {
         try{
-            const {startColumn,dragStartIndex,movingItem,endColumn,dragEnterIndex}=req.body
-        const item={_id:new mongoose.Types.ObjectId(movingItem)}
+        const {startColumn,dragStartIndex,movingItem,endColumn,dragEnterIndex}=req.body
+        console.log(req.body);
         
-        await projectManagerCollection.updateOne({name:startColumn},{$pull:{projects:item}})
-        const projectManager=await projectManagerCollection.findOneAndUpdate({name:endColumn},{$push:{projects:item}})
-        if(projectManager){
-            if(projectManager.name==='unAssingned'){
-                await projectCollection.updateOne({_id:new mongoose.Types.ObjectId(movingItem)},{projectManager:projectManager.name})
-            }
-            else{
-                await projectCollection.updateOne({_id:new mongoose.Types.ObjectId(movingItem)},{projectManager:projectManager._id})
+        const endProjectManager=await projectManagerCollection.findOne({name:endColumn})
+        const startProjectManager=await projectManagerCollection.findOne({name:startColumn})
+        
+        if(startProjectManager){
+
+            await projectCollection.updateOne({_id:movingItem._id,"projectManagers.projectManagerId":startProjectManager._id},{$set:{"projectManagers.$.status":false}})
+        }
+    
+        let project
+        if(endProjectManager){
+            project=await projectCollection.findOneAndUpdate({_id:movingItem._id,"projectManagers.projectManagerId":endProjectManager._id},{$set:{"projectManagers.$.status":true}})
+            if(!project){
+                await projectCollection.updateOne({_id:movingItem._id},{$push:{projectManagers:{projectManagerId:endProjectManager._id,status:true}}})
+
             }
         }
-        res.json({status:true,message:'successfully updated'})
+
+        res.redirect('/connections?message=Succesfully updated')
         }
         catch(err){
             res.json({status:false,message:'updation failed'})
@@ -144,7 +166,8 @@ const superUseController = {
 
     addConnection: (req : reqType, res : resType) => {
         const email = req.body.connection
-        if (email) {
+        const position = req.body.designation
+        if (email&&position) {
             const {_id, companyName} = req.session.superUser
             const connectionObject: connectionType = newConnectionObject(companyName)
             const {logginUserName, password} = connectionObject
@@ -156,21 +179,30 @@ const superUseController = {
                 companyName,
                 superUserId: _id,
                 logginUserName,
-                password
+                password,
+                position
             }
             mailService(mailOptions).then(() => {
-                projectManagerCollection.insertMany([newConnectionData]).then(() => {
-                    res.json({status: true, message: 'Connection added successfully'})
-                }).catch(() => {
-                    res.json({status: false, message: 'Connection cannot be added right now-database issue'})
-                })
+                if(position=='projectManager'){
+                    projectManagerCollection.insertMany([newConnectionData]).then(() => {
+                        res.json({status: true, message: 'Project manager added successfully'})
+                    }).catch(() => {
+                        res.json({status: false, message: 'Connection cannot be added right now-database issue'})
+                    })   
+                }else if(position=='siteEngineer'){
+                    siteEngineerCollection.insertMany([newConnectionData]).then(() => {
+                        res.json({status: true, message: 'Site engineer added successfully'})
+                    }).catch(() => {
+                        res.json({status: false, message: 'Connection cannot be added right now-database issue'})
+                    })   
+                }
+                
             }).catch(() => {
                 res.json({status: false, message: 'Connection cannot be added right, nodemailer issue'})
             })
 
-
         } else {
-            res.json({status: false, message: 'Invalid email'})
+            res.json({status: false, message: 'Invalid email or designation'})
         }
     },
     paymentComplete: (req : reqType, res : resType) => {
