@@ -28,6 +28,7 @@
     "@types/multer": "^1.4.7",
     "@types/nodemailer": "^6.4.7",
     "@types/paypal-rest-sdk": "^1.7.6",
+    "@types/socket.io": "^3.0.2",
     "cloudinary": "^1.35.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

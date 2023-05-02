@@ -45,7 +45,11 @@ const projectController = {
             
             }}])
                 const data={projectsList,projectManagersList}
-                res.json({superUserTokenVerified:true,data})
+                let message;
+                if(req.query.message){
+                    message=req.query.message
+                }
+                res.json({superUserTokenVerified:true,data,message})
         }catch(err){
                 res.json({superUserTokenVerified:true,message:'Cannot get details now '})
                 console.log(err);
@@ -56,7 +60,7 @@ const projectController = {
         try{
         const {name,place}=req.body
         let {projectManagerId,lati,longi,budget}=req.body
-        console.log(projectManagerId);
+        console.log(req.body);
         if(!projectManagerId||projectManagerId=="unAssigned"){
             const unAssignedPm=await projectManagerCollection.findOne({name:"unAssigned"})
                 console.log(unAssignedPm);
@@ -66,13 +70,14 @@ const projectController = {
         }
         
         const superUserId=new Types.ObjectId(req.session.superUser._id)
+        
         lati=parseFloat(lati)
         longi=parseFloat(longi)
         budget=parseFloat(budget)
         console.log(projectManagerId);
         
         await projectCollection.insertMany([{name,place,budget,location:{lati,longi},projectManagers:[{projectManagerId,status:true}],superUserId}])
-            res.json({superUserTokenVerified:true,status:true,message:'Project added'})
+            res.redirect('/project?message=Project added')
         }catch(err){
             console.log(err);
             res.json({superUserTokenVerified:true,status:false,message:'Project cannotbe added to data base right now'}) 

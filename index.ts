@@ -59,3 +59,41 @@ app.use('/task', taskRoutes)
 app.listen(8000, () => {
     console.log('server started');
 })
+
+import { Server } from 'socket.io';
+const io=new Server(8001,{
+    cors:{
+        origin:['http://localhost:3000','http://localhost:3001']
+    }
+})
+
+let users:any=[]
+
+io.on('connection',(socket:any)=>{
+    console.log("newConnection established");
+    
+    socket.on('disconnect',()=>{
+        console.log('socket disconnected')
+        users=users.filter((user:any)=>user.socketId !== socket.id)
+    })
+
+    socket.on("message",({senderId,recieverId,message,conversationId}:{senderId:string,recieverId:string,message:string,conversationId:string})=>{
+        console.log("message from ",senderId,' to ', recieverId);
+        const user=users.filter((user:any)=>user.userId===recieverId)
+        if(user.length!==0){
+            io.to(user[0].socketId).emit("message",{senderId,recieverId,message,conversationId})
+        }else{
+            console.log('reciever is not online');
+        }
+    })
+
+    socket.on("userId",(userId:any)=>{
+        const user=users.filter((user:any)=>user.userId===userId)
+        if(user.length==0){
+            console.log(userId+" added to array");
+            users.push({userId,socketId:socket.id})
+        }
+        console.log('current array of users ',users)
+    })
+})
+
