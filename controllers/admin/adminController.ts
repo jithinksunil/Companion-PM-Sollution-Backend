@@ -9,7 +9,7 @@ const adminController = {
     },
     logIn: (req : reqType, res : resType) => {
         const password = req.body.password
-        const email = req.body.firstField
+        const email = req.body.email
 
 
         adminCollection.findOne({email}).then((admin) => {

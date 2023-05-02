@@ -19,7 +19,7 @@ const projectManagerController = {
      logIn: (req : reqType, res : resType) => {
 
         const password = req.body.password
-        const logginUserName = req.body.firstField
+        const logginUserName = req.body.userName
 
         projectManagerCollection.findOne({logginUserName}).then((projectManager) => {
 
