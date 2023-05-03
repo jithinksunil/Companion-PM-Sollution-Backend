@@ -5,6 +5,5 @@ export const superUserSessionCheck = (req : reqType, res : resType, next : () =>
         next()
     } else {
         res.json({message: "unautherised access- session expired"})
-        req.session.destroy()
     }
 }

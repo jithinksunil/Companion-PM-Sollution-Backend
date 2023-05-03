@@ -5,6 +5,5 @@ export const adminSessionCheck = (req : reqType, res : resType, next : () => voi
         console.log('session verified');
     } else {
         res.json({message: 'unautherised access- session expired'})
-        req.session.destroy()
     }
 }

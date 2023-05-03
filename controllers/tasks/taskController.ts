@@ -55,14 +55,26 @@ const taskController =  {
                 {$project:{name:1,taskDetails:1}}],
               as: "onDutySiteEngineers"
             }
+          },{
+            $lookup:{
+              from:"task_collections",
+              let:{projectId:'$_id'},
+              pipeline:[{$match:{$expr:{$eq:["$projectId","$$projectId"]}}},{$project:{name:1,siteEngineers:{$filter:
+                {
+                  input:"$siteEngineers",
+                  as:"siteEngineer",
+                  cond:{$eq:["$$siteEngineer.status",true]
+                }}}}},{$match:{siteEngineers:[]}}],
+              as:'unAssignedTasks'
+            }
           },
-          {$project:{projectId:"$_id",_id:0,name:1,onDutySiteEngineers:1}}
-        ]).then((tasks:any)=>{
-          console.log(tasks)
+          {$project:{projectId:"$_id",_id:0,name:1,onDutySiteEngineers:1,unAssignedTasks:1}}
+        ]).then((projects:any)=>{
           
-                const data=[...tasks]
+                const data=[...projects]
                 data.forEach((item:any)=>{
                     const onDutySiteEngineers:any={}
+                    onDutySiteEngineers.unAssignedTasks=item.unAssignedTasks
                     item.onDutySiteEngineers.forEach((eng:any)=>{
                         onDutySiteEngineers[eng.name]=eng.taskDetails
                     })
@@ -71,7 +83,6 @@ const taskController =  {
                 const message=req.query.message
   
             res.json({projectManagerTokenVerified:true,data,message})
-            console.log(data);
             
         }).catch((err)=>{
             console.log(err);
@@ -84,13 +95,17 @@ const taskController =  {
         const movingItemId=new Types.ObjectId(req.body.movingItem._id)
         const startSiteEngineer=await siteEngineerCollection.findOneAndUpdate({name:startColumn},{$pull:{currentTaskOrder:movingItemId}},{returnOriginal:false})
         const endSiteEngineer=await siteEngineerCollection.findOne({name:endColumn})
-        const currentTaskOrder=endSiteEngineer?.toObject().currentTaskOrder
-        
-        currentTaskOrder.splice(dragEnterIndex,0,movingItemId)
 
-        await siteEngineerCollection.updateOne({name:endColumn},{currentTaskOrder})
+
+        if(startSiteEngineer){
+          await taskCollection.updateOne({_id:movingItemId,"siteEngineers.siteEngineerId":startSiteEngineer._id},{$set:{"siteEngineers.$.status":false}})
+      }
         
         if(endSiteEngineer){
+          const currentTaskOrder=endSiteEngineer.toObject().currentTaskOrder
+          currentTaskOrder.splice(dragEnterIndex,0,movingItemId)
+          await siteEngineerCollection.updateOne({name:endColumn},{currentTaskOrder})
+
             const matched=await taskCollection.findOne({_id:movingItemId,"siteEngineers.siteEngineerId":endSiteEngineer._id})
             if(matched){
                 await taskCollection.updateOne({_id:movingItemId,"siteEngineers.siteEngineerId":endSiteEngineer._id},{"siteEngineers.$.status":true})
@@ -99,35 +114,41 @@ const taskController =  {
                 await taskCollection.updateOne({_id:movingItemId},{$push:{siteEngineers:{"siteEngineerId":endSiteEngineer._id,"status":true}}})
             }
         }
-        if(startSiteEngineer){
-            await taskCollection.updateOne({_id:movingItemId,"siteEngineers.siteEngineerId":startSiteEngineer._id},{$set:{"siteEngineers.$.status":false}})
+
+        if(startColumn=='unAssigned'){
+          await taskCollection.updateOne({_id:movingItemId},{})
         }
+        
+
+
         res.redirect('/task?message=Successfull updated')
 
     },
     add: async(req : reqType, res : resType) => {
         try{
-            const projectManagerId=req.session.projectManager._id
-            const {siteEngineerName}=req.query
+            const {siteEngineerName,projectId}=req.query
             const {task}=req.body
             const siteEngineer=await siteEngineerCollection.findOne({name:siteEngineerName})
+            const project=await projectCollection.findOne({_id: projectId})
             let taskData
             let currentTaskOrder:any
-            if(siteEngineer){
-                await taskCollection.insertMany([{name:task,siteEngineers:[{siteEngineerId:siteEngineer._id,status:true}]}])
+            if(siteEngineer&&project){ 
+                await taskCollection.insertMany([{name:task,siteEngineers:[{siteEngineerId:siteEngineer._id,status:true}],projectId:project._id}])
                 taskData=await taskCollection.findOne({name:task,"siteEngineers.$.siteEngineerId":siteEngineer._id,"siteEngineers.$.status":true})
                 currentTaskOrder=siteEngineer.currentTaskOrder
+                if(currentTaskOrder){
+                  if(taskData)
+                  currentTaskOrder.splice(0,0,taskData._id)
+              }else{
+  
+                  currentTaskOrder=[taskData?._id]
+              }
+              await siteEngineerCollection.updateOne({name:siteEngineerName},{currentTaskOrder})
             }
-            if(currentTaskOrder){
-                if(taskData)
-                currentTaskOrder.splice(0,0,taskData._id)
-            }else{
+            else if(siteEngineerName=="unAssignedTasks"&&project){
+              await taskCollection.insertMany([{name:task,siteEngineers:[],projectId:project._id}])
+            }
 
-                currentTaskOrder=[taskData?._id]
-            }
-            await siteEngineerCollection.updateOne({name:siteEngineerName},{currentTaskOrder})
-            
-              
             res.redirect('/task?message=Task added')
         }
         catch(err){

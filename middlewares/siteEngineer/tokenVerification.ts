@@ -8,7 +8,6 @@ export const siteEngineerVerifyToken = (req : reqType, res : resType, next : () 
         jwt.verify(siteEngineerToken, 'mySecretKeyForSiteEngineer', (err, decoded) => {
             if (err) {
                 console.log(err);
-                req.session.destroy()
                 res.json({siteEngineerTokenVerified: false, message: 'Failed to varify site engineer token'})
             } else {
                 console.log('site engineer Token Verified')
@@ -16,7 +15,6 @@ export const siteEngineerVerifyToken = (req : reqType, res : resType, next : () 
             }
         })
     } else {
-        req.session.destroy()
         res.json({siteEngineerTokenVerified: false, message: 'Failed to varify site engineer token'})
     }
 }

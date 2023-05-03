@@ -8,6 +8,7 @@ import projectCollection from "../../models/projectSchema"
 import mongoose, { Types } from "mongoose"
 import notificationCollection from "../../models/notificationCollection"
 import siteEngineerCollection from "../../models/siteEngineerSchema"
+import taskCollection from "../../models/taskShema"
 
 const superUseController = {
     verifyToken: (req : reqType, res : resType) => {
@@ -15,7 +16,6 @@ const superUseController = {
         res.json({superUserTokenVerified: true,superUserData})
     },
     logout: (req : reqType, res : resType) => {
-        req.session.destroy()
         res.json({status:true,message:'Succesfully Logged Out'})
     },
     signUp: (req : reqType, res : resType) => { // any data can be recieved now so must be validated befor saving to database
@@ -135,26 +135,95 @@ const superUseController = {
         res.json({superUserTokenVerified:true,data,message})
         
     },
+    siteEngineerList: async(req : reqType, res : resType) => {
+        const superUserId=new Types.ObjectId(req.session.superUser._id)
+        const projects:any=await projectCollection.aggregate([{$match:{superUserId}},{
+            $lookup:{
+                from:'site_engineer_collections',
+                let:{projectId:'$_id'},
+                pipeline:[{$match:{$expr:{$in:['$$projectId',"$projects.projectId"]}}},{$project:{name:1,projects:{$filter:{
+                    input:"$projects",
+                    as:"project",
+                    cond:{
+                        $and:[{$eq:["$$project.projectId","$$projectId"]},
+                        {$eq:["$$project.status",true]}]
+                    }
+                }}}},{
+                    $match:{"projects.status":true}
+                }],
+                as:'siteEngineers'
+            },
+            
+        }])
+        const unAssignedSiteEngineers= await siteEngineerCollection.aggregate([{$match:{superUserId}},{$project:{name:1,projects:{$filter:{
+            input:"$projects",
+            as:'project',
+            cond:{$eq:["$$project.status",true]}
+        }}}},{$match:{projects:[]}}])
+        console.log(unAssignedSiteEngineers);
+        
+        const data:any={}
+        data.unAssigned=unAssignedSiteEngineers
+        projects.map((item:any)=>{
+            data[item.name]=item.siteEngineers
+        })
+
+        const message=req.query.message
+        res.json({superUserTokenVerified:true,data,message})
+    },
+    siteEngineerAssignment: async(req : reqType, res : resType) => {
+        const {startColumn,dragStartIndex,movingItem,endColumn,dragEnterIndex}=req.body
+        const endProject=await projectCollection.findOne({name:endColumn})
+        const startProject=await projectCollection.findOne({name:startColumn})
+        const movingItemId=new Types.ObjectId(movingItem._id)
+        if(startColumn!==endColumn){
+            if(startProject){
+                
+                await siteEngineerCollection.updateOne({_id:movingItemId,"projects.projectId":startProject._id},{$set:{"projects.$.status":false,currentTaskOrder:[]}})
+                await taskCollection.updateMany({projectId:startProject._id,"siteEngineers.siteEngineerId":new Types.ObjectId(movingItemId)},{$set:{"siteEngineers.$.status":false}})
+                console.log(typeof(movingItemId));
+                console.log(typeof(movingItem));
+                
+
+            }
+            let siteEngineer
+            if(endProject){
+                siteEngineer=await siteEngineerCollection.findOneAndUpdate({_id:movingItemId,"projects.projectId":endProject._id},{$set:{"projects.$.status":true}})
+                if(!siteEngineer){
+                    await siteEngineerCollection.updateOne({_id:movingItemId},{$push:{projects:{projectId:endProject._id,status:true}}})
+
+                }
+            }
+        }
+        
+        res.redirect('/siteengineerlist?message=Succesfully updated')
+    },
     updateProjectAssingment: async (req : reqType, res : resType) => {
         try{
         const {startColumn,dragStartIndex,movingItem,endColumn,dragEnterIndex}=req.body
-        console.log(req.body);
+        const superUserId= new Types.ObjectId(req.session.superUser._id)
+        const movingItemId=new Types.ObjectId(movingItem._id)
         
         const endProjectManager=await projectManagerCollection.findOne({name:endColumn})
         const startProjectManager=await projectManagerCollection.findOne({name:startColumn})
         
         if(startProjectManager){
 
-            await projectCollection.updateOne({_id:movingItem._id,"projectManagers.projectManagerId":startProjectManager._id},{$set:{"projectManagers.$.status":false}})
+            await projectCollection.updateOne({_id:movingItemId,"projectManagers.projectManagerId":startProjectManager._id},{$set:{"projectManagers.$.status":false}})
         }
     
         let project
         if(endProjectManager){
-            project=await projectCollection.findOneAndUpdate({_id:movingItem._id,"projectManagers.projectManagerId":endProjectManager._id},{$set:{"projectManagers.$.status":true}})
+            project=await projectCollection.findOneAndUpdate({_id:movingItemId,"projectManagers.projectManagerId":endProjectManager._id},{$set:{"projectManagers.$.status":true}})
             if(!project){
-                await projectCollection.updateOne({_id:movingItem._id},{$push:{projectManagers:{projectManagerId:endProjectManager._id,status:true}}})
+                await projectCollection.updateOne({_id:movingItemId},{$push:{projectManagers:{projectManagerId:endProjectManager._id,status:true}}})
 
             }
+        }
+
+        if(endColumn=="unAssigned"){
+            await siteEngineerCollection.updateMany({superUserId,"projects.projectId":movingItemId},{$set:{"projects.$.status":false,currentTaskOrder:[]}})
+            await taskCollection.updateMany({projectId:movingItemId,"siteEngineers.status":true},{$set:{"siteEngineers.$.status":false}})
         }
 
         res.redirect('/connections?message=Succesfully updated')

@@ -10,7 +10,6 @@ export const superUserVerifyToken = (req : reqType, res : resType, next : () => 
         jwt.verify(superUserToken, 'mySecretKeyForSuperUser', (err, decoded) => {
             if (err) {
                 console.log(err);
-                req.session.destroy()
                 res.json({superUserTokenVerified: false, message: 'Failed to varify supreUser token'})
             } else {
                 console.log('SupreUser Token Verified')
@@ -19,7 +18,6 @@ export const superUserVerifyToken = (req : reqType, res : resType, next : () => 
             }
         })
     } else {
-        req.session.destroy()
         res.json({superUserTokenVerified: false, message: 'Failed to varify supreUser token'})
     }
 }

@@ -15,6 +15,8 @@ superUserRouter.get('/profile', superUserVerifyToken, superUserSessionCheck, sup
 superUserRouter.post('/updateimage', superUserVerifyToken, superUserSessionCheck,uploadSuperUser.single('file'), superUseController.updateImage)
 superUserRouter.post('/updateprofile', superUserVerifyToken, superUserSessionCheck, superUseController.updateProfile)
 superUserRouter.get('/connections', superUseController.connections)
+superUserRouter.get('/siteengineerlist', superUseController.siteEngineerList)
+superUserRouter.post('/updatesiteengineerassignment', superUseController.siteEngineerAssignment)
 superUserRouter.post('/updateprojectassignment', superUserVerifyToken, superUserSessionCheck, superUseController.updateProjectAssingment)
 superUserRouter.post('/addConnection', superUserVerifyToken, superUserSessionCheck, superUseController.addConnection)
 superUserRouter.post('/paymentcomplete', superUserVerifyToken, superUserSessionCheck, superUseController.paymentComplete)
