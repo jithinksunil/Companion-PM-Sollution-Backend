@@ -2,7 +2,12 @@ import {reqType, resType} from "../../types/expressTypes"
 // import jwt from 'jsonwebtoken'
 
 export const superUserVerifyToken = (req : reqType, res : resType, next : () => void) => {
-    // const superUserToken: string = req.cookies.superUserToken
+    const superUserToken: string = req.cookies.superUserToken
+    console.log('superuserToken is:');
+    
+    console.log(superUserToken);
+    console.log('---------------------');
+    
     
     
     if (true) {

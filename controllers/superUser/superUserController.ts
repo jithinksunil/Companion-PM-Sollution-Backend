@@ -16,6 +16,7 @@ const superUseController = {
         res.json({superUserTokenVerified: true,superUserData})
     },
     logout: (req : reqType, res : resType) => {
+        req.session.destroy()
         res.json({status:true,message:'Succesfully Logged Out'})
     },
     signUp: (req : reqType, res : resType) => { // any data can be recieved now so must be validated befor saving to database
