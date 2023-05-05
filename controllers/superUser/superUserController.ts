@@ -17,6 +17,7 @@ const superUseController = {
     },
     logout: (req : reqType, res : resType) => {
         res.json({status:true,message:'Succesfully Logged Out'})
+        req.session.destroy()
     },
     signUp: (req : reqType, res : resType) => { // any data can be recieved now so must be validated befor saving to database
         superUserCollection.insertMany([req.body]).then(() => {
