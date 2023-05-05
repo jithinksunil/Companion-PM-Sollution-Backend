@@ -73,7 +73,7 @@ const projectController = {
         console.log(projectManagerId);
         
         await projectCollection.insertMany([{name,place,budget,location:{lati,longi},projectManagers:[{projectManagerId,status:true}],superUserId}])
-            res.redirect('/project?message=Project added')
+            res.redirect('/backend/project?message=Project added')
         }catch(err){
             console.log(err);
             res.json({superUserTokenVerified:true,status:false,message:'Project cannotbe added to data base right now'}) 

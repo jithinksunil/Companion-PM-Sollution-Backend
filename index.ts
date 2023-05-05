@@ -8,7 +8,7 @@ mongodb()
 
 import cors from 'cors'
 app.use(cors({
-    origin: [process.env.CORS_LINK as string],
+    origin: ["http://localhost:3000","http://localhost:3001",process.env.CORS_LINK as string],
     methods: [
         "GET",
         "POST",
@@ -48,7 +48,7 @@ import notificationRoutes from './routes/notificationRoutes'
 import taskRoutes from './routes/taskRoutes'
 
 
-app.use('/backend/', superUserRoutes)
+app.use('/backend', superUserRoutes)
 app.use('/backend/projectmanager', projectManagerRoutes)
 app.use('/backend/siteengineer', siteEngineerRoutes)
 app.use('/backend/admin', adminRoutes)
