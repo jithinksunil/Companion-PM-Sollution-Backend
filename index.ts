@@ -48,14 +48,14 @@ import notificationRoutes from './routes/notificationRoutes'
 import taskRoutes from './routes/taskRoutes'
 
 
-app.use('/', superUserRoutes)
-app.use('/projectmanager', projectManagerRoutes)
-app.use('/siteengineer', siteEngineerRoutes)
-app.use('/admin', adminRoutes)
-app.use('/project', projectRoutes)
-app.use('/chat', chatRoutes)
-app.use('/notification', notificationRoutes)
-app.use('/task', taskRoutes)
+app.use('/api/', superUserRoutes)
+app.use('/api/projectmanager', projectManagerRoutes)
+app.use('/api/siteengineer', siteEngineerRoutes)
+app.use('/api/admin', adminRoutes)
+app.use('/api/project', projectRoutes)
+app.use('/api/chat', chatRoutes)
+app.use('/api/notification', notificationRoutes)
+app.use('/api/task', taskRoutes)
 app.listen(process.env.PORT , () => {
     console.log('server started');
 })
@@ -63,7 +63,7 @@ app.listen(process.env.PORT , () => {
 import { Server } from 'socket.io';
 const io=new Server( 8001 ,{
     cors:{
-        origin:[process.env.CORS_LINK as string]
+        origin:["http:localhost:3000","http:localhost:3001",process.env.CORS_LINK as string]
     }
 })
 
