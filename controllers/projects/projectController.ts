@@ -13,16 +13,12 @@ const projectController = {
         } 
 
         
-        let projectManagersList=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$project:{name:1}}])
-        
-        const unAssignedProjectManager=projectManagersList.find((item)=>item.name==="unAssigned")
-            
+        const unAssignedProjectManager=await projectManagerCollection.findOne({superUserId:new Types.ObjectId(req.session.superUser._id),name:'unAssigned'})
         if(!unAssignedProjectManager){
-            await projectManagerCollection.insertMany([{name:"unAssigned",superUserId:new Types.ObjectId(req.session.superUser._id)}])
-            projectManagersList=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$project:{name:1}}])
-
+            await projectManagerCollection.insertMany([{name:'unAssigned',superUserId:new Types.ObjectId(req.session.superUser._id)}])
         }
-
+        const projectManagersList=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$project:{name:1}}])
+        
         const projectsList=await projectCollection.aggregate([{$match:{$and:[{superUserId:new Types.ObjectId(req.session.superUser._id)},{$or:[{name:{
             $regex: search,
             $options: 'i'
