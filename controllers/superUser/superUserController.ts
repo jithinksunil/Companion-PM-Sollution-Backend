@@ -196,7 +196,7 @@ const superUseController = {
             }
         }
         
-        res.redirect('/backend/siteengineerlist?message=Succesfully updated')
+        res.redirect('/siteengineerlist?message=Succesfully updated')
     },
     updateProjectAssingment: async (req : reqType, res : resType) => {
         try{
@@ -226,7 +226,7 @@ const superUseController = {
             await taskCollection.updateMany({projectId:movingItemId,"siteEngineers.status":true},{$set:{"siteEngineers.$.status":false}})
         }
 
-        res.redirect('/backend/connections?message=Succesfully updated')
+        res.redirect('/connections?message=Succesfully updated')
         }
         catch(err){
             res.json({status:false,message:'updation failed'})

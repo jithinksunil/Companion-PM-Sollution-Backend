@@ -121,7 +121,7 @@ const taskController =  {
         
 
 
-        res.redirect('/backend/task?message=Successfull updated')
+        res.redirect('/task?message=Successfull updated')
 
     },
     add: async(req : reqType, res : resType) => {
@@ -149,7 +149,7 @@ const taskController =  {
               await taskCollection.insertMany([{name:task,siteEngineers:[],projectId:project._id}])
             }
 
-            res.redirect('/backend/task?message=Task added')
+            res.redirect('/task?message=Task added')
         }
         catch(err){
             res.json({message:"cannot save the task right now"})

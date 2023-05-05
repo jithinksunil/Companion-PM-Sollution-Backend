@@ -8,7 +8,7 @@ mongodb()
 
 import cors from 'cors'
 app.use(cors({
-    origin: ["http://localhost:3000","http://localhost:3001",process.env.CORS_LINK as string],
+    origin: ["http://localhost:3001",process.env.CORS_LINK as string],
     methods: [
         "GET",
         "POST",
@@ -48,14 +48,14 @@ import notificationRoutes from './routes/notificationRoutes'
 import taskRoutes from './routes/taskRoutes'
 
 
-app.use('/backend', superUserRoutes)
-app.use('/backend/projectmanager', projectManagerRoutes)
-app.use('/backend/siteengineer', siteEngineerRoutes)
-app.use('/backend/admin', adminRoutes)
-app.use('/backend/project', projectRoutes)
-app.use('/backend/chat', chatRoutes)
-app.use('/backend/notification', notificationRoutes)
-app.use('/backend/task', taskRoutes)
+app.use('/', superUserRoutes)
+app.use('/projectmanager', projectManagerRoutes)
+app.use('/siteengineer', siteEngineerRoutes)
+app.use('/admin', adminRoutes)
+app.use('/project', projectRoutes)
+app.use('/chat', chatRoutes)
+app.use('/notification', notificationRoutes)
+app.use('/task', taskRoutes)
 app.listen(process.env.PORT , () => {
     console.log('server started');
 })
