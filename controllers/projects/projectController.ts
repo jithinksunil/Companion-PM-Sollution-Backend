@@ -14,6 +14,8 @@ const projectController = {
 
         
         const unAssignedProjectManager=await projectManagerCollection.findOne({superUserId:new Types.ObjectId(req.session.superUser._id),name:'unAssigned'})
+        console.log();
+        
         if(!unAssignedProjectManager){
             await projectManagerCollection.insertMany([{name:'unAssigned',superUserId:new Types.ObjectId(req.session.superUser._id)}])
         }
