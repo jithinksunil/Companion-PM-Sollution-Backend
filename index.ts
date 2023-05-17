@@ -25,8 +25,8 @@ app.use(session({ // setup session
     saveUninitialized: true,
     secret: 'khfihuifgyscghi6543367567vhbjjfgt45475nvjhgjgj+6+9878', // random hash key string to genarate session id
 }))
-
-app.use((req, res, next) => { // setup cache
+import { reqType, resType } from './types/expressTypes'
+app.use((req:reqType, res:resType, next) => { // setup cache
     res.set("Cache-Control", "no-store");
     next();
 });
@@ -67,7 +67,7 @@ const io=new Server( 8001 ,{
     }
 })
 
-let users:any=[]
+let users:any[]=[]
 
 io.on('connection',(socket:any)=>{
     console.log("newConnection established");
@@ -96,4 +96,5 @@ io.on('connection',(socket:any)=>{
         console.log('current array of users ',users)
     })
 })
+
 

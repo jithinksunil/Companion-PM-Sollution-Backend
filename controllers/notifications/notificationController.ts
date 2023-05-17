@@ -6,7 +6,10 @@ import { Types } from "mongoose"
 const notificationController ={
     notifications: async(req : reqType, res : resType) => {
         const individual=req.body.individual
-        notificationCollection.find({notifiedIndividualId:req.session[individual]._id}).sort({$natural:-1}).then((notifications:any)=>{
+        notificationCollection.find({notifiedIndividualId:req.session[individual]._id}).sort({$natural:-1}).then((notifications:[{notifiedIndividualId:Types.ObjectId,
+            senderId:Types.ObjectId,
+            notification:string,
+            url:string,}])=>{
             res.json({notifications})
         }).catch(()=>{
             res.json({message:"data base facing issues to fetch the notifications now"})
