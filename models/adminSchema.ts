@@ -1,5 +1,6 @@
 import mongoose, {Document, Schema} from 'mongoose'
 
+
 interface adminDocument extends Document {
     email: string,
     password: string

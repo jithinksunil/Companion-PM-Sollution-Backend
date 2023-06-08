@@ -47,7 +47,6 @@ import chatRoutes from './routes/chatRoutes'
 import notificationRoutes from './routes/notificationRoutes'
 import taskRoutes from './routes/taskRoutes'
 
-
 app.use('/', superUserRoutes)
 app.use('/projectmanager', projectManagerRoutes)
 app.use('/siteengineer', siteEngineerRoutes)
@@ -57,29 +56,32 @@ app.use('/chat', chatRoutes)
 app.use('/notification', notificationRoutes)
 app.use('/task', taskRoutes)
 app.listen(process.env.PORT , () => {
-    console.log('server started');
+    console.log(`server started on port ${process.env.PORT}`);
 })
 
-import { Server } from 'socket.io';
+import { Server,Socket } from 'socket.io';
+
 const io=new Server( 8001 ,{
     cors:{
         origin:["http:localhost:3000","http:localhost:3001",process.env.CORS_LINK as string]
     }
 })
 
-let users:any[]=[]
+let users:Array<user>=[]
+interface user{
+    socketId:string,
+    userId:string
+}
 
-io.on('connection',(socket:any)=>{
+io.on('connection',(socket:Socket)=>{
     console.log("newConnection established");
-    
     socket.on('disconnect',()=>{
         console.log('socket disconnected')
-        users=users.filter((user:any)=>user.socketId !== socket.id)
+        users=users.filter((user:user)=>user.socketId !== socket.id)
     })
 
     socket.on("message",({senderId,recieverId,message,conversationId}:{senderId:string,recieverId:string,message:string,conversationId:string})=>{
-        console.log("message from ",senderId,' to ', recieverId);
-        const user=users.filter((user:any)=>user.userId===recieverId)
+        const user=users.filter((user:user)=>user.userId===recieverId)
         if(user.length!==0){
             io.to(user[0].socketId).emit("message",{senderId,recieverId,message,conversationId})
         }else{
@@ -87,13 +89,11 @@ io.on('connection',(socket:any)=>{
         }
     })
 
-    socket.on("userId",(userId:any)=>{
-        const user=users.filter((user:any)=>user.userId===userId)
+    socket.on("userId",(userId:string)=>{
+        const user=users.filter((user:user)=>user.userId===userId)
         if(user.length==0){
-            console.log(userId+" added to array");
             users.push({userId,socketId:socket.id})
         }
-        console.log('current array of users ',users)
     })
 })
 

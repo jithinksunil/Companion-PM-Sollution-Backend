@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 import cloudinary from '../../config/cloudinaryConfig'
 import {newConnectionObject, newConnectionMailObject, mailService} from "../../config/nodeMailer"
 import projectManagerCollection from "../../models/projectManagerSchema"
-import projectCollection from "../../models/projectSchema"
+import projectCollection, { projectDocument } from "../../models/projectSchema"
 import mongoose, { Types } from "mongoose"
 import notificationCollection from "../../models/notificationCollection"
 import siteEngineerCollection from "../../models/siteEngineerSchema"
@@ -19,12 +19,27 @@ const superUseController = {
         req.session.destroy()
         res.json({status:true,message:'Succesfully Logged Out'})
     },
-    signUp: (req : reqType, res : resType) => { // any data can be recieved now so must be validated befor saving to database
-        superUserCollection.insertMany([req.body]).then(() => {
-            res.json({status: true})
-        }).catch(() => {
-            res.json({status: false})
-        })
+    signUp: async(req : reqType, res : resType) => { // any data can be recieved now so must be validated befor saving to database
+        try{
+            const {email}=req.body
+            console.log(req.body);
+            
+            const superUserExist=await superUserCollection.findOne({email})
+            if(superUserExist){
+                res.json({status:false,message:'User already exist'})
+            }else{
+                superUserCollection.insertMany([req.body]).then(() => {
+                    console.log('added');
+                    
+                    res.json({status: true,message:'Signin Successfullllll'})
+                }).catch(() => {
+                    res.json({status: false,message:'Database facing issues'})
+                })
+            }
+        }
+        catch(err){
+            res.json({status: false,message:'Database facing issues'})
+        }
     },
     logIn: (req : reqType, res : resType) => {
         const password = req.body.password
@@ -103,7 +118,7 @@ const superUseController = {
             })
         }
         else{
-            res.json({status:false,message:'Password doesnot matches'})
+            res.json({status:false,message:'Password does not matches'})
         }
     },
     connections: async(req : reqType, res : resType) => {

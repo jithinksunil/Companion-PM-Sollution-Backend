@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Types} from 'mongoose'
 
-interface taskDocument extends Document {
+export interface taskDocument extends Document {
     projectId:Types.ObjectId,
     siteEngineers:[{siteEngineerId:Types.ObjectId|string,status:boolean}],
     name:string,

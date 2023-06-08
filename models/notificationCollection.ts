@@ -1,6 +1,6 @@
 import mongoose, { Document, Types} from 'mongoose'
 
-interface notificationDocument extends Document {
+export interface notificationDocument extends Document {
     notifiedIndividualId:Types.ObjectId,
     senderId:Types.ObjectId,
     notification:string,

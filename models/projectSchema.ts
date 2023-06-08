@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Types} from 'mongoose'
 
-interface projectDocument extends Document {
+export interface projectDocument extends Document {
     name:string,
     location:{lati:number,longi:number},
     place:string,

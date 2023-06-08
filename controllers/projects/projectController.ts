@@ -5,18 +5,21 @@ import mongoose from "mongoose"
 import { Types } from "mongoose"
 
 const projectController = {
-    projects:async(req : reqType, res : resType) => {
+    projects:async (req : reqType, res : resType) => {
         try{
         let {search} = req.query
         if (!search){
             search = ''
         } 
-
+        console.log('reached');
         
         const unAssignedProjectManager=await projectManagerCollection.findOne({superUserId:new Types.ObjectId(req.session.superUser._id),name:'unAssigned'})
-        console.log();
         
         if(!unAssignedProjectManager){
+            console.log(Date.now());
+            console.log(typeof(unAssignedProjectManager));
+            console.log(unAssignedProjectManager);
+            
             await projectManagerCollection.insertMany([{name:'unAssigned',superUserId:new Types.ObjectId(req.session.superUser._id)}])
         }
         const projectManagersList=await projectManagerCollection.aggregate([{$match:{superUserId:new Types.ObjectId(req.session.superUser._id)}},{$project:{name:1}}])
@@ -56,9 +59,9 @@ const projectController = {
      },
     createProject: async (req : reqType, res : resType) => {
         try{
+        console.log(req.body);
         const {name,place}=req.body
         let {projectManagerId,lati,longi,budget}=req.body
-        console.log(req.body);
         if(!projectManagerId||projectManagerId=="unAssigned"){
             const unAssignedPm=await projectManagerCollection.findOne({name:"unAssigned"})
                 console.log(unAssignedPm);

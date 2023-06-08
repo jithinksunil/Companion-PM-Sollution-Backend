@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose'
 
-interface UserDocument extends Document {
+export interface UserDocument extends Document {
     name: string,
     image: string,
     email: string,

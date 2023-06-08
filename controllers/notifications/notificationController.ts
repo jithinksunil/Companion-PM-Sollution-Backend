@@ -1,4 +1,4 @@
-import notificationCollection from "../../models/notificationCollection"
+import notificationCollection, { notificationDocument } from "../../models/notificationCollection"
 import {reqType, resType} from "../../types/expressTypes"
 import { Types } from "mongoose"
 
@@ -6,10 +6,7 @@ import { Types } from "mongoose"
 const notificationController ={
     notifications: async(req : reqType, res : resType) => {
         const individual=req.body.individual
-        notificationCollection.find({notifiedIndividualId:req.session[individual]._id}).sort({$natural:-1}).then((notifications:[{notifiedIndividualId:Types.ObjectId,
-            senderId:Types.ObjectId,
-            notification:string,
-            url:string,}])=>{
+        notificationCollection.find({notifiedIndividualId:req.session[individual]._id}).sort({$natural:-1}).then((notifications:Array<notificationDocument>)=>{
             res.json({notifications})
         }).catch(()=>{
             res.json({message:"data base facing issues to fetch the notifications now"})

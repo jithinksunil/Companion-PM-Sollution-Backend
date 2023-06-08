@@ -1,6 +1,6 @@
 import projectCollection from "../../models/projectSchema"
 import siteEngineerCollection from "../../models/siteEngineerSchema"
-import taskCollection from "../../models/taskShema"
+import taskCollection, { taskDocument } from "../../models/taskShema"
 import {reqType, resType} from "../../types/expressTypes"
 import { Types } from "mongoose"
 
@@ -130,8 +130,8 @@ const taskController =  {
             const {task}=req.body
             const siteEngineer=await siteEngineerCollection.findOne({name:siteEngineerName})
             const project=await projectCollection.findOne({_id: projectId})
-            let taskData
-            let currentTaskOrder:any
+            let taskData:taskDocument|null
+            let currentTaskOrder:Array<Types.ObjectId>
             if(siteEngineer&&project){ 
                 await taskCollection.insertMany([{name:task,siteEngineers:[{siteEngineerId:siteEngineer._id,status:true}],projectId:project._id}])
                 taskData=await taskCollection.findOne({name:task,"siteEngineers.$.siteEngineerId":siteEngineer._id,"siteEngineers.$.status":true})

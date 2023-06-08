@@ -1,6 +1,6 @@
 import mongoose, {Document, Schema} from 'mongoose'
 
-interface ProjectMangerDocument extends Document {
+export interface ProjectMangerDocument extends Document {
     name: string,
     image: string,
     email: string,

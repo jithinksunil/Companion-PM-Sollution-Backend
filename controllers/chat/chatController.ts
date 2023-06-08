@@ -36,7 +36,6 @@ const chatController = {
         try{
 
             let {senderId,recieverId}=req.body
-            console.log(senderId,recieverId);
             
             if(senderId!==recieverId){
 
@@ -48,7 +47,6 @@ const chatController = {
                     await conversationCollection.insertMany([{members:[senderId,recieverId]}])
                     conversation=await conversationCollection.findOne({members:[senderId,recieverId]})
                 }
-                console.log(conversation);
                 
                 if(conversation){//conversation can possibly null
                     const messages=await messageCollection.find({conversationId:conversation._id})
