@@ -4,8 +4,7 @@ import  { findAllConnections, messageSend, messagesAndChatDetails } from "../../
 const chatController = {
     connnectionList: (req: reqType, res: resType) => {
         const superUserId = req.body.superUserId
-        let connections: any[] = []
-        findAllConnections(connections, superUserId).then((connections) => {
+        findAllConnections(superUserId).then((connections) => {
             res.json({ connections })
 
         }).catch(() => {

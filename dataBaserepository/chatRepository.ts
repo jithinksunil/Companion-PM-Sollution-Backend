@@ -6,14 +6,12 @@ import conversationCollection from "../models/conversationShema"
 import messageCollection from "../models/messageShema"
 
 
-export const findAllConnections = async (connections: any[], superUserId: any) => {
+export const findAllConnections = async ( superUserId: any) => {
     try {
-        let projectmanagers = await projectManagerCollection.find({ superUserId: new Types.ObjectId(superUserId) })
-        connections = projectmanagers
-        let siteEngineers = await siteEngineerCollection.find({ superUserId: new Types.ObjectId(superUserId) })
-        connections = [...connections, ...siteEngineers]
-        let superUser = await superUserCollection.findOne({ _id: new Types.ObjectId(superUserId) })
-        return Promise.resolve([...connections, superUser])
+        const projectmanagers = await projectManagerCollection.find({ superUserId: new Types.ObjectId(superUserId) })
+        const siteEngineers = await siteEngineerCollection.find({ superUserId: new Types.ObjectId(superUserId) })
+        const superUser = await superUserCollection.findOne({ _id: new Types.ObjectId(superUserId) })
+        return Promise.resolve([...projectmanagers,...siteEngineers,superUser])
     } catch (error) {
         return Promise.reject(error)
     }
