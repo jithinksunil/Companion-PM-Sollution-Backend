@@ -5,8 +5,7 @@ import cloudinary from '../../config/cloudinaryConfig'
 import {newConnectionObject, newConnectionMailObject, mailService} from "../../config/nodeMailer"
 import projectManagerCollection from "../../models/projectManagerSchema"
 import projectCollection, { projectDocument } from "../../models/projectSchema"
-import mongoose, { Types } from "mongoose"
-import notificationCollection from "../../models/notificationCollection"
+import  { Types } from "mongoose"
 import siteEngineerCollection from "../../models/siteEngineerSchema"
 import taskCollection from "../../models/taskShema"
 

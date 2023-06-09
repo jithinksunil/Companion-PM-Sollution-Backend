@@ -1,25 +1,23 @@
-import notificationCollection, { notificationDocument } from "../../models/notificationCollection"
-import {reqType, resType} from "../../types/expressTypes"
-import { Types } from "mongoose"
+import { createNotification, getAllNotification } from "../../dataBaserepository/notificationRepository"
+import { reqType, resType } from "../../types/expressTypes"
 
-
-const notificationController ={
-    notifications: async(req : reqType, res : resType) => {
-        const individual=req.body.individual
-        notificationCollection.find({notifiedIndividualId:req.session[individual]._id}).sort({$natural:-1}).then((notifications:Array<notificationDocument>)=>{
-            res.json({notifications})
-        }).catch(()=>{
-            res.json({message:"data base facing issues to fetch the notifications now"})
+const notificationController = {
+    notifications: (req: reqType, res: resType) => {
+        const individual = req.body.individual
+        let notifiedIndividualId = req.session[individual]._id
+        getAllNotification(notifiedIndividualId).then((notifications) => {
+            res.json({ notifications })
+        }).catch(() => {
+            res.json({ message: "data base facing issues to fetch the notifications now" })
         })
     },
-    create: async(req : reqType, res : resType) => {
-        req.body.notifiedIndividualId=new Types.ObjectId(req.body.notifiedIndividualId)
-        notificationCollection.insertMany([req.body]).then(()=>{
-            res.json({status:true,message:"notificaion send"})
-        }).catch(()=>{
-            res.json({message:"cannot save the notification right now"})
+    create: (req: reqType, res: resType) => {
+        createNotification(req.body).then((status) => {
+            res.json({ status, message: "notificaion send" })
+        }).catch(() => {
+            res.json({ message: "cannot save the notification right now" })
         })
     }
-} 
+}
 
 export default notificationController
