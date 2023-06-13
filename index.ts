@@ -2,7 +2,8 @@ import express from 'express'
 const app = express()
 import dotenv from 'dotenv'
 dotenv.config()//will convert the .env file into an object
-
+import morgan from 'morgan';
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"))
 import mongodb from './config/mongoos'
 mongodb()
 
@@ -55,11 +56,13 @@ app.use('/project', projectRoutes)
 app.use('/chat', chatRoutes)
 app.use('/notification', notificationRoutes)
 app.use('/task', taskRoutes)
+
 app.listen(process.env.PORT , () => {
     console.log(`server started on port ${process.env.PORT}`);
 })
 
 import { Server,Socket } from 'socket.io';
+
 
 const io=new Server( 8001 ,{
     cors:{

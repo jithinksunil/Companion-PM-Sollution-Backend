@@ -41,6 +41,7 @@ const superUseController = {
         }
     },
     logIn: (req : reqType, res : resType) => {
+
         const password = req.body.password
         const email = req.body.email
         
