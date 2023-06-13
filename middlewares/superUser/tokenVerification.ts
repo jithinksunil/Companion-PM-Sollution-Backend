@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 
 export const superUserVerifyToken = (req : reqType, res : resType, next : () => void) => {
     const superUserToken: string = req.cookies.superUserToken
-    
+    console.log(superUserToken);
     
     if (superUserToken) {
 
