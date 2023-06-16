@@ -48,8 +48,10 @@ import projectRoutes from './routes/projectRoutes'
 import chatRoutes from './routes/chatRoutes'
 import notificationRoutes from './routes/notificationRoutes'
 import taskRoutes from './routes/taskRoutes'
+import guestRoutes from './routes/guestRoutes';
 
 app.use('/', superUserRoutes)
+app.use('/guest', guestRoutes)
 app.use('/projectmanager', projectManagerRoutes)
 app.use('/siteengineer', siteEngineerRoutes)
 app.use('/admin', adminRoutes)
@@ -63,6 +65,7 @@ app.listen(process.env.PORT, () => {
 })
 
 import { Server, Socket } from 'socket.io';
+
 
 
 const io = new Server(8001, {
