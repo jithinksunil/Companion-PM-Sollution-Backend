@@ -4,6 +4,8 @@ export const superUserSessionCheck = (req : reqType, res : resType, next : () =>
         console.log('session verified');
         next()
     } else {
+        console.log('session issue');
+        
         res.json({message: "unautherised access- session expired"})
     }
 }

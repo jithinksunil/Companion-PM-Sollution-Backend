@@ -47,7 +47,8 @@ const siteEngineerController = {
     siteEngineerProfile: (req : reqType, res : resType) => {
 
         siteEngineerCollection.findOne({_id: req.session.siteEngineer._id}).then((siteEngineerData) => {
-            res.json({tokenVerified: true, data: siteEngineerData})
+            const message=req.query.message
+            res.json({tokenVerified: true, data: siteEngineerData,status:true,message})
         }).catch(() => {
             res.json({tokenVerified: true, message: 'Cannot fetch data now data base issue'})
         })
@@ -68,7 +69,7 @@ const siteEngineerController = {
                 siteEngineerCollection.updateOne({
                     _id: userId
                 }, {image: result.secure_url}).then(() => {
-                    res.json({staus: true, message: 'successfully updated'})
+                    res.redirect("/siteEngineer/profile?message=successfully updated")
                 }).catch(() => {
                     res.json({staus: false, message: 'data base facing issue try later'})
                 })

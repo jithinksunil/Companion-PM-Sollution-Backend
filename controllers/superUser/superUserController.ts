@@ -65,13 +65,14 @@ const superUseController = {
 
     },
     superUserDashBoard: (req: reqType, res: resType) => {
+        console.log('reached');
+        
         res.json({ tokenVerified: true })
     },
     superUserProfile: (req: reqType, res: resType) => {
-        console.log('reached the pofile section');
-
         superUserCollection.findOne({ _id: req.session.superUser._id }).then((superUserData) => {
-            res.json({ tokenVerified: true, data: superUserData })
+            const message=req.query.message
+            res.json({ tokenVerified: true, data: superUserData,status:true,message })
         }).catch(() => {
             res.json({ tokenVerified: true, message: 'Cannot fetch data now data base issue' })
         })
@@ -93,7 +94,7 @@ const superUseController = {
                 superUserCollection.updateOne({
                     _id: userId
                 }, { image: result.secure_url }).then(() => {
-                    res.json({ staus: true, message: 'successfully updated' })
+                    res.redirect('/profile?message=successfully updated')
                 }).catch(() => {
                     res.json({ staus: false, message: 'data base facing issue try later' })
                 })
