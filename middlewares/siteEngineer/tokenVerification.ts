@@ -8,13 +8,13 @@ export const siteEngineerVerifyToken = (req : reqType, res : resType, next : () 
         jwt.verify(siteEngineerToken, 'mySecretKeyForSiteEngineer', (err, decoded) => {
             if (err) {
                 console.log(err);
-                res.json({siteEngineerTokenVerified: false, message: 'Failed to varify site engineer token'})
+                res.json({tokenVerified: false, message: 'Failed to varify site engineer token'})
             } else {
                 console.log('site engineer Token Verified')
                 next()
             }
         })
     } else {
-        res.json({siteEngineerTokenVerified: false, message: 'Failed to varify site engineer token'})
+        res.json({tokenVerified: false, message: 'Failed to varify site engineer token'})
     }
 }

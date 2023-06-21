@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 
 const adminController = {
     verifyToken: (req : reqType, res : resType) => {
-        res.json({adminTokenVerified: true})
+        res.json({tokenVerified: true})
     },
     logIn: (req : reqType, res : resType) => {
         const password = req.body.password
@@ -35,11 +35,11 @@ const adminController = {
     },
     adminDashBoard: (req : reqType, res : resType) => {
         const adminData = req.session.admin
-        res.json({adminTokenVerified: true, adminData})
+        res.json({tokenVerified: true, adminData})
     },
     adminProfile: (req : reqType, res : resType) => {
         const adminData = req.session.admin
-        res.json({adminTokenVerified: true, adminData})
+        res.json({tokenVerified: true, adminData})
     },
     superUserManagement: (req : reqType, res : resType) => {
         let {search} = req.query
@@ -60,11 +60,11 @@ const adminController = {
                 }
             ]
         }).then((superUsersData : any) => { // if(superUsersData.length==0){superUsersData=[{email:'nothing to display',companyName:'nothing to display',password:'nothing to display'}]}
-            res.json({adminTokenVerified: true, superUsersData})
+            res.json({tokenVerified: true, superUsersData})
         }).catch(err => {
 
             console.log(err)
-            res.json({adminTokenVerified: true, message: 'Sorry, connot retrieve datas now, Database facing issues'})
+            res.json({tokenVerified: true, message: 'Sorry, connot retrieve datas now, Database facing issues'})
         })
     },
     blockOrUnblock: (req : reqType, res : resType) => {

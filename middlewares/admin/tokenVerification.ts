@@ -6,13 +6,13 @@ export const adminVerifyToken = (req : reqType, res : resType, next : () => void
     if (adminToken) {
         jwt.verify(adminToken, 'mySecretKeyForAdmin', (err, decoded) => {
             if (err) {
-                res.json({adminTokenVerified: false, message: 'Admin token verification failed'})
+                res.json({tokenVerified: false, message: 'Admin token verification failed'})
             } else {
                 console.log('Admin token Verified');
                 next()
             }
         })
     } else {
-        res.json({adminTokenVerified: false, message: 'Admin token verification failed'})
+        res.json({tokenVerified: false, message: 'Admin token verification failed'})
     }
 }

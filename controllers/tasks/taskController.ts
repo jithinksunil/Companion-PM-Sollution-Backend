@@ -82,7 +82,7 @@ const taskController =  {
                 })
                 const message=req.query.message
   
-            res.json({projectManagerTokenVerified:true,data,message})
+            res.json({tokenVerified:true,data,message})
             
         }).catch((err)=>{
             console.log(err);

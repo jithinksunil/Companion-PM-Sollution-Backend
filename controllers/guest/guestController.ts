@@ -19,5 +19,5 @@ export const login = async (req: reqType, res: resType) => {
 
 export const dashboard = async(req: reqType, res: resType) => {
 
-    res.status(200).json({ status: true,guestTokenVerified:true, message:`You have ${req.remainingTime} minutes remaining` })
+    res.status(200).json({ status: true,tokenVerified:true, message:`You have ${req.remainingTime} minutes remaining` })
 }

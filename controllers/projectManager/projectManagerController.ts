@@ -7,7 +7,7 @@ import mongoose from "mongoose"
 
 const projectManagerController = {
     verifyToken: (req : reqType, res : resType) => {
-        res.json({projectManagerTokenVerified: true})
+        res.json({tokenVerified: true})
     },
     signUp: (req : reqType, res : resType) => { // any data can be recieved now so must be validated befor saving to database
         projectManagerCollection.insertMany([req.body]).then(() => {
@@ -43,14 +43,14 @@ const projectManagerController = {
     },
     projectManagerDashBoard: (req : reqType, res : resType) => {
         const projectManagerData = req.session.projectManager
-        res.json({projectManagerTokenVerified: true, projectManagerData})
+        res.json({tokenVerified: true, projectManagerData})
     },
     projectManagerProfile: (req : reqType, res : resType) => {
 
         projectManagerCollection.findOne({_id: req.session.projectManager._id}).then((projectManagerData) => {
-            res.json({projectManagerTokenVerified: true,data: projectManagerData})
+            res.json({tokenVerified: true,data: projectManagerData})
         }).catch(() => {
-            res.json({projectManagerTokenVerified: true, message: 'Cannot fetch data now data base issue'})
+            res.json({tokenVerified: true, message: 'Cannot fetch data now data base issue'})
         })
     },
     updateImage: (req : reqType, res : resType) => {

@@ -50,9 +50,9 @@ const projectController = {
                 if(req.query.message){
                     message=req.query.message
                 }
-                res.json({superUserTokenVerified:true,data,message})
+                res.json({tokenVerified:true,data,message})
         }catch(err){
-                res.json({superUserTokenVerified:true,message:'Cannot get details now '})
+                res.json({tokenVerified:true,message:'Cannot get details now '})
                 console.log(err);
                 
             }
@@ -81,7 +81,7 @@ const projectController = {
             res.redirect('/project?message=Project added')
         }catch(err){
             console.log(err);
-            res.json({superUserTokenVerified:true,status:false,message:'Project cannotbe added to data base right now'}) 
+            res.json({tokenVerified:true,status:false,message:'Project cannotbe added to data base right now'}) 
         }
     }
 

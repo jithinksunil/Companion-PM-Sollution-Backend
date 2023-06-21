@@ -7,7 +7,7 @@ import projectCollection from "../../models/projectSchema"
 
 const siteEngineerController = {
     verifyToken: (req : reqType, res : resType) => {
-        res.json({siteEngineerTokenVerified: true})
+        res.json({tokenVerified: true})
     },
      logIn: (req : reqType, res : resType) => {
 
@@ -35,21 +35,21 @@ const siteEngineerController = {
     },
     siteEngineerDashBoard: (req : reqType, res : resType) => {
         const siteEngineerData = req.session.siteEngineer
-        res.json({siteEngineerTokenVerified: true, data:siteEngineerData})
+        res.json({tokenVerified: true, data:siteEngineerData})
     },
     project: (req : reqType, res : resType) => {
         projectCollection.findOne({_id:req.session.siteEngineer.projectId}).then((project)=>{
-            res.json({siteEngineerTokenVerified:true,data:project})
+            res.json({tokenVerified:true,data:project})
         }).catch(()=>{
-            res.json({siteEngineerTokenVerified:true,message:'cannot fetch project details from the database now'})
+            res.json({tokenVerified:true,message:'cannot fetch project details from the database now'})
         })
     },
     siteEngineerProfile: (req : reqType, res : resType) => {
 
         siteEngineerCollection.findOne({_id: req.session.siteEngineer._id}).then((siteEngineerData) => {
-            res.json({siteEngineerTokenVerified: true, data: siteEngineerData})
+            res.json({tokenVerified: true, data: siteEngineerData})
         }).catch(() => {
-            res.json({siteEngineerTokenVerified: true, message: 'Cannot fetch data now data base issue'})
+            res.json({tokenVerified: true, message: 'Cannot fetch data now data base issue'})
         })
     },
     updateImage: (req : reqType, res : resType) => {

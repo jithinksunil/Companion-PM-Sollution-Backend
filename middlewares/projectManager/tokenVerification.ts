@@ -8,13 +8,13 @@ export const projectManagerVerifyToken = (req : reqType, res : resType, next : (
         jwt.verify(projectManagerToken, 'mySecretKeyForProjectManager', (err, decoded) => {
             if (err) {
                 console.log(err);
-                res.json({projectManagerTokenVerified: false, message: 'Failed to varify projectmanger token'})
+                res.json({tokenVerified: false, message: 'Failed to varify projectmanger token'})
             } else {
                 console.log('Projectmanger Token Verified')
                 next()
             }
         })
     } else {
-        res.json({projectManagerTokenVerified: false, message: 'Failed to varify projectmanger token'})
+        res.json({tokenVerified: false, message: 'Failed to varify projectmanger token'})
     }
 }

@@ -9,14 +9,13 @@ export const superUserVerifyToken = (req : reqType, res : resType, next : () => 
 
         jwt.verify(superUserToken, 'mySecretKeyForSuperUser', (err, decoded) => {
             if (err) {
-                res.json({superUserTokenVerified: false, message: 'Failed to varify supreUser token'})
+                res.json({tokenVerified: false, message: 'Failed to varify supreUser token'})
             } else {
                 console.log('SupreUser Token Verified')
-
                 next()
             }
         })
     } else {
-        res.json({superUserTokenVerified: false, message: 'Failed to varify supreUser token'})
+        res.json({tokenVerified: false, message: 'Failed to varify supreUser token'})
     }
 }
