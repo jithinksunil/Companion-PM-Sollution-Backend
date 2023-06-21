@@ -69,6 +69,8 @@ const projectController = {
         }else{
             projectManagerId=new Types.ObjectId(projectManagerId)
         }
+        let a=req.session
+        console.log(a);
         
         const superUserId=new Types.ObjectId(req.session.superUser._id)
         
