@@ -12,11 +12,11 @@ import taskCollection from "../../models/taskShema"
 const superUseController = {
     verifyToken: (req: reqType, res: resType) => {
         const superUserData = req.session.superUser
-        res.json({ tokenVerified: true, superUserData })
+        res.status(200).json({ tokenVerified: true, superUserData })
     },
     logout: (req: reqType, res: resType) => {
         req.session.destroy()
-        res.json({ status: true, message: 'Succesfully Logged Out' })
+        res.status(200).json({ status: true, message: 'Succesfully Logged Out' })
     },
     signUp: async (req: reqType, res: resType) => { // any data can be recieved now so must be validated befor saving to database
         try {
@@ -30,9 +30,9 @@ const superUseController = {
                 superUserCollection.insertMany([req.body]).then(() => {
                     console.log('added');
 
-                    res.json({ status: true, message: 'Signin Successfullllll' })
+                    res.status(200).json({ status: true, message: 'Signin Successfullllll' })
                 }).catch(() => {
-                    res.json({ status: false, message: 'Database facing issues' })
+                    res.status(200).json({ status: false, message: 'Database facing issues' })
                 })
             }
         }
@@ -81,6 +81,8 @@ const superUseController = {
     updateImage: (req: reqType, res: resType) => {
 
         const userId = req.session.superUser._id
+        console.log(req.file);
+        
         if (req.file) {
             cloudinary.uploader.upload(req.file.path, {
                 transformation: [

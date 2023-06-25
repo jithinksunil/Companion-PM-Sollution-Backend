@@ -7,6 +7,7 @@ const mongodb: () => void = () => {
         w: 'majority'
     }).then(() => {
         console.log('Data Base connected')
+        
     }).catch(() => {
         console.log('Cannot connect to Data Base')
     })

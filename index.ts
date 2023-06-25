@@ -1,13 +1,36 @@
 import express from 'express'
-const app = express()
 import dotenv from 'dotenv'
-dotenv.config()//will convert the .env file into an object
 import morgan from 'morgan';
-if (process.env.NODE_ENV === "development") app.use(morgan("dev"))
 import mongodb from './config/mongoos'
+import cors from 'cors'
+import session from 'express-session'
+import cookieParser from 'cookie-parser'
+
+import superUserRoutes from './routes/superUserRoutes'
+import adminRoutes from './routes/adminRoutes'
+import projectManagerRoutes from './routes/projectManagerRoutes'
+import siteEngineerRoutes from './routes/siteEngineerRoutes'
+import projectRoutes from './routes/projectRoutes'
+import chatRoutes from './routes/chatRoutes'
+import notificationRoutes from './routes/notificationRoutes'
+import taskRoutes from './routes/taskRoutes'
+import guestRoutes from './routes/guestRoutes';
+
+import ErrorResponse from './error/ErrorResponse'
+import errorHandler from './error/errorHandler';
+import { reqType, resType } from './types/expressTypes'
+
+import { Server, Socket } from 'socket.io';
+
+const app = express()
 mongodb()
 
-import cors from 'cors'
+dotenv.config()//will convert the .env file into an object
+
+if (process.env.NODE_ENV === "development") {
+    app.use(morgan("dev"))
+}
+
 app.use(cors({
     origin: process.env.CORS_LINK_ARRAY?.split(','),
     methods: [
@@ -21,15 +44,12 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }))
 
-import session from 'express-session'
 app.use(session({ // setup session
     resave: true, // to resave the session
     saveUninitialized: true,
     secret: 'khfihuifgyscghi6543367567vhbjjfgt45475nvjhgjgj+6+9878', // random hash key string to genarate session id
 }))
-app.use((req: reqType, res: resType, next)=>{console.log(req.session.siteEngineer); next()}
-)
-import { reqType, resType } from './types/expressTypes'
+
 app.use((req: reqType, res: resType, next) => { // setup cache
     res.set("Cache-Control", "no-store");
     next();
@@ -37,20 +57,7 @@ app.use((req: reqType, res: resType, next) => { // setup cache
 
 app.use(express.urlencoded({ extended: true })) // to get data from post method
 app.use(express.json()) // to recieve the data in json format from the axios call
-
-import cookieParser from 'cookie-parser'
 app.use(cookieParser());
-
-
-import superUserRoutes from './routes/superUserRoutes'
-import adminRoutes from './routes/adminRoutes'
-import projectManagerRoutes from './routes/projectManagerRoutes'
-import siteEngineerRoutes from './routes/siteEngineerRoutes'
-import projectRoutes from './routes/projectRoutes'
-import chatRoutes from './routes/chatRoutes'
-import notificationRoutes from './routes/notificationRoutes'
-import taskRoutes from './routes/taskRoutes'
-import guestRoutes from './routes/guestRoutes';
 
 app.use('/', superUserRoutes)
 app.use('/guest', guestRoutes)
@@ -61,14 +68,15 @@ app.use('/project', projectRoutes)
 app.use('/chat', chatRoutes)
 app.use('/notification', notificationRoutes)
 app.use('/task', taskRoutes)
+app.use('*', (req: reqType, res: resType, next: (err: ErrorResponse) => void) => {
+    next(ErrorResponse.notFound())
+})
+
+app.use(errorHandler)
 
 app.listen(process.env.PORT, () => {
     console.log(`server started on port ${process.env.PORT}`);
 })
-
-import { Server, Socket } from 'socket.io';
-
-
 
 const io = new Server(8001, {
     cors: {
