@@ -27,6 +27,8 @@ app.use(session({ // setup session
     saveUninitialized: true,
     secret: 'khfihuifgyscghi6543367567vhbjjfgt45475nvjhgjgj+6+9878', // random hash key string to genarate session id
 }))
+app.use((req: reqType, res: resType, next)=>{console.log(req.session.siteEngineer); next()}
+)
 import { reqType, resType } from './types/expressTypes'
 app.use((req: reqType, res: resType, next) => { // setup cache
     res.set("Cache-Control", "no-store");
@@ -53,7 +55,7 @@ import guestRoutes from './routes/guestRoutes';
 app.use('/', superUserRoutes)
 app.use('/guest', guestRoutes)
 app.use('/projectmanager', projectManagerRoutes)
-app.use('/siteengineer', siteEngineerRoutes)
+app.use('/siteEngineer', siteEngineerRoutes)
 app.use('/admin', adminRoutes)
 app.use('/project', projectRoutes)
 app.use('/chat', chatRoutes)

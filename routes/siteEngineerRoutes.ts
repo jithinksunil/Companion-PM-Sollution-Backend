@@ -11,8 +11,8 @@ siteEngineerRouter.get('/verifyToken',  siteEngineerController.verifyToken)
 siteEngineerRouter.get('/dashboard',  siteEngineerController.siteEngineerDashBoard)
 siteEngineerRouter.get('/project',  siteEngineerController.project)
 siteEngineerRouter.get('/profile',  siteEngineerController.siteEngineerProfile)
-siteEngineerRouter.post('/updateimage', uploadSiteEngineer.single('file'), siteEngineerController.updateImage)
+siteEngineerRouter.post('/updateImage', uploadSiteEngineer.single('file'), siteEngineerController.updateImage)
 siteEngineerRouter.get('/attendence', siteEngineerController.markAttendence)
-siteEngineerRouter.post('/updateprofile', siteEngineerController.updateProfile)
+siteEngineerRouter.post('/updateProfile', siteEngineerController.updateProfile)
 
 export default siteEngineerRouter

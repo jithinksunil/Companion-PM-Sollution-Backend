@@ -50,7 +50,7 @@ const projectController = {
                 if(req.query.message){
                     message=req.query.message
                 }
-                res.json({tokenVerified:true,data,message})
+                res.json({tokenVerified:true,data,message,status:true})
         }catch(err){
                 res.json({tokenVerified:true,message:'Cannot get details now '})
                 console.log(err);

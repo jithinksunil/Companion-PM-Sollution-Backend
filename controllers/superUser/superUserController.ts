@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 import cloudinary from '../../config/cloudinaryConfig'
 import { newConnectionObject, newConnectionMailObject, mailService } from "../../config/nodeMailer"
 import projectManagerCollection from "../../models/projectManagerSchema"
-import projectCollection, { projectDocument } from "../../models/projectSchema"
+import projectCollection from "../../models/projectSchema"
 import { Types } from "mongoose"
 import siteEngineerCollection from "../../models/siteEngineerSchema"
 import taskCollection from "../../models/taskShema"
@@ -41,7 +41,7 @@ const superUseController = {
         }
     },
     logIn: (req: reqType, res: resType) => {
-        
+
 
         const password = req.body.password
         const email = req.body.email
@@ -67,13 +67,13 @@ const superUseController = {
     },
     superUserDashBoard: (req: reqType, res: resType) => {
         console.log('reached');
-        
+
         res.json({ tokenVerified: true })
     },
     superUserProfile: (req: reqType, res: resType) => {
         superUserCollection.findOne({ _id: req.session.superUser._id }).then((superUserData) => {
-            const message=req.query.message
-            res.json({ tokenVerified: true, data: superUserData,status:true,message })
+            const message = req.query.message
+            res.json({ tokenVerified: true, data: superUserData, status: true, message })
         }).catch(() => {
             res.json({ tokenVerified: true, message: 'Cannot fetch data now data base issue' })
         })
@@ -158,7 +158,7 @@ const superUseController = {
         })
 
         const message = req.query.message
-        res.json({ tokenVerified: true, data, message })
+        res.json({ tokenVerified: true, status: true, data, message })
 
     },
     siteEngineerList: async (req: reqType, res: resType) => {
@@ -207,7 +207,7 @@ const superUseController = {
         })
 
         const message = req.query.message
-        res.json({ tokenVerified: true, data, message })
+        res.json({ tokenVerified: true, data, message,status:true })
     },
     siteEngineerAssignment: async (req: reqType, res: resType) => {
         const { startColumn, dragStartIndex, movingItem, endColumn, dragEnterIndex } = req.body
@@ -275,7 +275,6 @@ const superUseController = {
     addConnection: (req: reqType, res: resType) => {
         const email = req.body.connection
         const position = req.body.designation
-        console.log(req.body)
 
         if (email && position) {
             const { _id, companyName } = req.session.superUser
@@ -295,13 +294,13 @@ const superUseController = {
             mailService(mailOptions).then(() => {
                 if (position == 'projectManager') {
                     projectManagerCollection.insertMany([newConnectionData]).then(() => {
-                        res.json({ status: true, message: 'Project manager added successfully' })
+                        res.redirect('/connections?message=Site engineer added successfully')
                     }).catch(() => {
                         res.json({ status: false, message: 'Connection cannot be added right now-database issue' })
                     })
                 } else if (position == 'siteEngineer') {
                     siteEngineerCollection.insertMany([newConnectionData]).then(() => {
-                        res.redirect('/connections?message=Site engineer added successfully')
+                        res.json({ status: true, message: 'SiteEngineer added succesfully' })
                     }).catch(() => {
                         res.json({ status: false, message: 'Connection cannot be added right now-database issue' })
                     })
