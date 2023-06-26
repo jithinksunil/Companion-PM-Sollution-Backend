@@ -4,28 +4,24 @@ import morgan from 'morgan';
 import mongodb from './config/mongoos'
 import cors from 'cors'
 import session from 'express-session'
+import { reqType, resType } from './types/expressTypes'
 import cookieParser from 'cookie-parser'
 
-import superUserRoutes from './routes/superUserRoutes'
 import adminRoutes from './routes/adminRoutes'
-import projectManagerRoutes from './routes/projectManagerRoutes'
-import siteEngineerRoutes from './routes/siteEngineerRoutes'
 import projectRoutes from './routes/projectRoutes'
 import chatRoutes from './routes/chatRoutes'
 import notificationRoutes from './routes/notificationRoutes'
 import taskRoutes from './routes/taskRoutes'
-import guestRoutes from './routes/guestRoutes';
-
 import ErrorResponse from './error/ErrorResponse'
 import errorHandler from './error/errorHandler';
-import { reqType, resType } from './types/expressTypes'
 
 import { Server, Socket } from 'socket.io';
 
 const app = express()
+
 dotenv.config()//will convert the .env file into an object
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development"){
     app.use(morgan("dev"))
 }
 
@@ -50,6 +46,9 @@ app.use(session({ // setup session
     secret: 'khfihuifgyscghi6543367567vhbjjfgt45475nvjhgjgj+6+9878', // random hash key string to genarate session id
 }))
 
+app.use((req: reqType, res: resType, next) => { console.log(req.session.siteEngineer); next() }
+)
+
 app.use((req: reqType, res: resType, next) => { // setup cache
     res.set("Cache-Control", "no-store");
     next();
@@ -58,6 +57,12 @@ app.use((req: reqType, res: resType, next) => { // setup cache
 app.use(express.urlencoded({ extended: true })) // to get data from post method
 app.use(express.json()) // to recieve the data in json format from the axios call
 app.use(cookieParser());
+
+
+import superUserRoutes from './routes/superUserRoutes'
+import projectManagerRoutes from './routes/projectManagerRoutes'
+import siteEngineerRoutes from './routes/siteEngineerRoutes'
+import guestRoutes from './routes/guestRoutes';
 
 app.use('/', superUserRoutes)
 app.use('/guest', guestRoutes)
@@ -68,16 +73,17 @@ app.use('/project', projectRoutes)
 app.use('/chat', chatRoutes)
 app.use('/notification', notificationRoutes)
 app.use('/task', taskRoutes)
+
 app.use('*', (req: reqType, res: resType, next: (err: ErrorResponse) => void) => {
     next(ErrorResponse.notFound())
 })
-
 app.use(errorHandler)
 
 app.listen(process.env.PORT, () => {
     console.log(`server started on port ${process.env.PORT}`);
 })
 
+/*----------socket io start here-----------*/
 const io = new Server(8001, {
     cors: {
         origin: ["http:localhost:3000", "http:localhost:3001", process.env.CORS_LINK as string]
@@ -113,3 +119,5 @@ io.on('connection', (socket: Socket) => {
         }
     })
 })
+
+
