@@ -1,18 +1,19 @@
+import ErrorResponse from "../../error/ErrorResponse"
 import {reqType, resType} from "../../types/expressTypes"
 import jwt from 'jsonwebtoken'
 
-export const adminVerifyToken = (req : reqType, res : resType, next : () => void) => {
+export const adminVerifyToken = (req : reqType, res : resType, next : (err?:ErrorResponse) => void) => {
     const adminToken: string = req.cookies.adminToken
     if (adminToken) {
         jwt.verify(adminToken, 'mySecretKeyForAdmin', (err, decoded) => {
             if (err) {
-                res.json({tokenVerified: false, message: 'Admin token verification failed'})
+                next(ErrorResponse.forbidden('Admin token verification failed'))
             } else {
                 console.log('Admin token Verified');
                 next()
             }
         })
     } else {
-        res.json({tokenVerified: false, message: 'Admin token verification failed'})
+        next(ErrorResponse.unauthorized())
     }
 }
