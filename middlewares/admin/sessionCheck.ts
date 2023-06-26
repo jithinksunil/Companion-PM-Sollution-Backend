@@ -5,6 +5,6 @@ export const adminSessionCheck = (req : reqType, res : resType, next : (err?:Err
         next()
         console.log('session verified');
     } else {
-        next(ErrorResponse.unauthorized())
+        next(ErrorResponse.unauthorized('Un-authorised access'))
     }
 }

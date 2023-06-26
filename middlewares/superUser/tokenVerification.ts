@@ -1,7 +1,8 @@
+import ErrorResponse from "../../error/ErrorResponse";
 import {reqType, resType} from "../../types/expressTypes"
 import jwt from 'jsonwebtoken'
 
-export const superUserVerifyToken = (req : reqType, res : resType, next : () => void) => {
+export const superUserVerifyToken = (req : reqType, res : resType, next : (err?:ErrorResponse) => void) => {
     const superUserToken: string = req.cookies.superUserToken
     console.log(superUserToken);
     
@@ -9,13 +10,13 @@ export const superUserVerifyToken = (req : reqType, res : resType, next : () => 
 
         jwt.verify(superUserToken, 'mySecretKeyForSuperUser', (err, decoded) => {
             if (err) {
-                res.json({tokenVerified: false, message: 'Failed to varify supreUser token'})
+                next(ErrorResponse.forbidden('Failed to varify supreUser token'))
             } else {
                 console.log('SupreUser Token Verified')
                 next()
             }
         })
     } else {
-        res.json({tokenVerified: false, message: 'Failed to varify supreUser token'})
+        next(ErrorResponse.unauthorized('Un-authorised access'))
     }
 }

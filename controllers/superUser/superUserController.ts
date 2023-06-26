@@ -8,36 +8,35 @@ import projectCollection from "../../models/projectSchema"
 import { Types } from "mongoose"
 import siteEngineerCollection from "../../models/siteEngineerSchema"
 import taskCollection from "../../models/taskShema"
+import ErrorResponse from "../../error/ErrorResponse"
 
 const superUseController = {
     verifyToken: (req: reqType, res: resType) => {
         const superUserData = req.session.superUser
-        res.status(200).json({ tokenVerified: true, superUserData })
+        res.status(200).json({ tokenVerified: true, message:'Super user token verified' })
     },
     logout: (req: reqType, res: resType) => {
         req.session.destroy()
         res.status(200).json({ status: true, message: 'Succesfully Logged Out' })
     },
-    signUp: async (req: reqType, res: resType) => { // any data can be recieved now so must be validated befor saving to database
+    signUp: async (req: reqType, res: resType,next:(err?:ErrorResponse)=>void) => { // any data can be recieved now so must be validated befor saving to database
         try {
             const { email } = req.body
-            console.log(req.body);
-
             const superUserExist = await superUserCollection.findOne({ email })
             if (superUserExist) {
-                res.json({ status: false, message: 'User already exist' })
+                res.status(409).json({ status: false, message: 'User already exist' })
             } else {
                 superUserCollection.insertMany([req.body]).then(() => {
                     console.log('added');
 
                     res.status(200).json({ status: true, message: 'Signin Successfullllll' })
                 }).catch(() => {
-                    res.status(200).json({ status: false, message: 'Database facing issues' })
+                    next(ErrorResponse.internalError('Database facing issues'))
                 })
             }
         }
         catch (err) {
-            res.json({ status: false, message: 'Database facing issues' })
+            next(ErrorResponse.internalError('Database facing issues'))
         }
     },
     logIn: (req: reqType, res: resType) => {

@@ -2,7 +2,7 @@ class ErrorResponse extends Error {
 
     constructor(status: number, message: string) {
         super(message);
-        this.status = status;
+        this.status = status
     }
 
     status: number
@@ -19,8 +19,8 @@ class ErrorResponse extends Error {
         return new ErrorResponse(403, msg);
     }
 
-    static notFound() {
-        return new ErrorResponse(404, 'Not found');
+    static notFound(msg='Not found') {
+        return new ErrorResponse(404, msg);
     }
 
     static internalError(msg = 'Internal error') {

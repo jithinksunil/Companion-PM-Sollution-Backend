@@ -14,6 +14,6 @@ export const adminVerifyToken = (req : reqType, res : resType, next : (err?:Erro
             }
         })
     } else {
-        next(ErrorResponse.unauthorized())
+        next(ErrorResponse.unauthorized('Admin token verification failed'))
     }
 }

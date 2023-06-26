@@ -23,13 +23,23 @@ import { reqType, resType } from './types/expressTypes'
 import { Server, Socket } from 'socket.io';
 
 const app = express()
-mongodb()
-
 dotenv.config()//will convert the .env file into an object
+
+mongodb()
 
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"))
 }
+app.use((req: reqType, res: resType, next)=>{
+    console.log('--------------');
+    console.log(req.socket?.remoteAddress);
+    console.log('--------------');
+    console.log(req.ip);
+    console.log('--------------');
+    console.log(req.headers['x-forwarded-for']);
+    
+    next()
+})
 
 app.use(cors({
     origin: process.env.CORS_LINK_ARRAY?.split(','),
