@@ -25,11 +25,11 @@ import { Server, Socket } from 'socket.io';
 const app = express()
 dotenv.config()//will convert the .env file into an object
 
-mongodb()
-
 if (process.env.NODE_ENV === "development") {
     app.use(morgan("dev"))
 }
+
+mongodb()
 
 app.use(cors({
     origin: process.env.CORS_LINK_ARRAY?.split(','),
@@ -113,5 +113,3 @@ io.on('connection', (socket: Socket) => {
         }
     })
 })
-
-
