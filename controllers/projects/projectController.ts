@@ -1,7 +1,6 @@
 import {reqType, resType} from "../../types/expressTypes"
 import projectCollection from "../../models/projectSchema"
 import projectManagerCollection from "../../models/projectManagerSchema"
-import mongoose from "mongoose"
 import { Types } from "mongoose"
 
 const projectController = {
@@ -11,7 +10,6 @@ const projectController = {
         if (!search){
             search = ''
         } 
-        console.log('reached');
         
         const unAssignedProjectManager=await projectManagerCollection.findOne({superUserId:new Types.ObjectId(req.session.superUser._id),name:'unAssigned'})
         
@@ -64,14 +62,10 @@ const projectController = {
         let {projectManagerId,lati,longi,budget}=req.body
         if(!projectManagerId||projectManagerId=="unAssigned"){
             const unAssignedPm=await projectManagerCollection.findOne({name:"unAssigned"})
-                console.log(unAssignedPm);
                 projectManagerId=unAssignedPm?.toObject()._id
         }else{
             projectManagerId=new Types.ObjectId(projectManagerId)
         }
-        let a=req.session
-        console.log(a);
-        
         const superUserId=new Types.ObjectId(req.session.superUser._id)
         
         lati=parseFloat(lati)

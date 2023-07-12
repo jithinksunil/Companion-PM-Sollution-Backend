@@ -9,10 +9,10 @@ import { Types } from "mongoose"
 import siteEngineerCollection from "../../models/siteEngineerSchema"
 import taskCollection from "../../models/taskShema"
 import ErrorResponse from "../../error/ErrorResponse"
+import { createAndGetGuest, findGuest } from "../../dataBaserepository/guestRepository"
 
 const superUseController = {
     verifyToken: (req: reqType, res: resType) => {
-        const superUserData = req.session.superUser
         res.status(200).json({ tokenVerified: true, message:'Super user token verified' })
     },
     logout: (req: reqType, res: resType) => {
@@ -22,6 +22,8 @@ const superUseController = {
     signUp: async (req: reqType, res: resType,next:(err?:ErrorResponse)=>void) => { // any data can be recieved now so must be validated befor saving to database
         try {
             const { email } = req.body
+            console.log(req.body);
+            
             const superUserExist = await superUserCollection.findOne({ email })
             if (superUserExist) {
                 res.status(409).json({ status: false, message: 'User already exist' })
@@ -41,7 +43,8 @@ const superUseController = {
     },
     logIn: (req: reqType, res: resType) => {
 
-
+        console.log('reached');
+        
         const password = req.body.password
         const email = req.body.email
 
@@ -64,10 +67,29 @@ const superUseController = {
         })
 
     },
-    superUserDashBoard: (req: reqType, res: resType) => {
-        console.log('reached');
+    guestLogin: async (req: reqType, res: resType) => {
+        try {
+            let token = req.cookies.superUserToken
+            let guest = await findGuest(token)
+            if (guest&&guest.position==='guest') {
+                return res.status(200).json({ verified: true, data:guest, token})
+            }
+            token = jwt.sign({ name: 'guest',createdAt:Date.now()}, 'mySecretKeyForSuperUser', { expiresIn: '30m' })
+            guest = await createAndGetGuest(token)
+            
+            req.session.superUser=guest?.toObject()
+            res.status(200).json({ verified: true, data:guest, token,message:'Logged in as Guest'})
+        } catch (err) {
+            res.status(500).json({message: 'Error on creating guest,try later' })
+        }
+    },
 
-        res.json({ tokenVerified: true })
+    superUserDashBoard: (req: reqType, res: resType) => {
+        let message;
+        if(req.remainingTime){
+            message=`You have ${req.remainingTime} minutes remaining`
+        }
+        res.json({ tokenVerified: true, message})
     },
     superUserProfile: (req: reqType, res: resType) => {
         superUserCollection.findOne({ _id: req.session.superUser._id }).then((superUserData) => {

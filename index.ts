@@ -46,9 +46,6 @@ app.use(session({ // setup session
     secret: 'khfihuifgyscghi6543367567vhbjjfgt45475nvjhgjgj+6+9878', // random hash key string to genarate session id
 }))
 
-app.use((req: reqType, res: resType, next) => { console.log(req.session.siteEngineer); next() }
-)
-
 app.use((req: reqType, res: resType, next) => { // setup cache
     res.set("Cache-Control", "no-store");
     next();
@@ -58,14 +55,11 @@ app.use(express.urlencoded({ extended: true })) // to get data from post method
 app.use(express.json()) // to recieve the data in json format from the axios call
 app.use(cookieParser());
 
-
 import superUserRoutes from './routes/superUserRoutes'
 import projectManagerRoutes from './routes/projectManagerRoutes'
 import siteEngineerRoutes from './routes/siteEngineerRoutes'
-import guestRoutes from './routes/guestRoutes';
 
 app.use('/', superUserRoutes)
-app.use('/guest', guestRoutes)
 app.use('/projectmanager', projectManagerRoutes)
 app.use('/siteEngineer', siteEngineerRoutes)
 app.use('/admin', adminRoutes)
@@ -86,7 +80,7 @@ app.listen(process.env.PORT, () => {
 /*----------socket io start here-----------*/
 const io = new Server(8001, {
     cors: {
-        origin: ["http:localhost:3000", "http:localhost:3001", process.env.CORS_LINK as string]
+        origin: ["http:localhost:3000", "http:localhost:3001", process.env.CORS_LINK_ARRAY as string]
     }
 })
 

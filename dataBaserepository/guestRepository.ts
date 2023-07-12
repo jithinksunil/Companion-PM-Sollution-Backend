@@ -1,9 +1,8 @@
-import { projectManagerSessionCheck } from "../middlewares/projectManager/sessionCheck"
-import guestCollection from "../models/guestSchema"
+import superUserCollection from "../models/superUserSchema"
 
 export const findGuest=async (guestToken:string)=>{
     try{
-        const guest=await guestCollection.findOne({guestToken})
+        const guest=await superUserCollection.findOne({guestToken})
         return Promise.resolve(guest)
     }catch(err){
         return Promise.reject(err)
@@ -11,8 +10,8 @@ export const findGuest=async (guestToken:string)=>{
 }
 export const createAndGetGuest=async (guestToken:string)=>{
     try{
-        await guestCollection.insertMany([{guestToken}])
-        const guest=await guestCollection.findOne({guestToken})
+        await superUserCollection.insertMany([{guestToken,position:'guest'}])
+        const guest=await superUserCollection.findOne({guestToken})
         return Promise.resolve(guest)
     }catch(err){
         return Promise.reject(false)
@@ -21,7 +20,7 @@ export const createAndGetGuest=async (guestToken:string)=>{
 
 export const updateGuest=async (guestToken:string)=>{
     try {
-        await guestCollection.updateOne({guestToken},{$set:{status:false}})
+        await superUserCollection.updateOne({guestToken},{$set:{status:false}})
         return Promise.resolve(true)
     } catch (error) {
         return Promise.reject(false)

@@ -1,22 +1,38 @@
+import { updateGuest } from "../../dataBaserepository/guestRepository";
 import ErrorResponse from "../../error/ErrorResponse";
-import {reqType, resType} from "../../types/expressTypes"
-import jwt from 'jsonwebtoken'
+import { reqType, resType } from "../../types/expressTypes";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-export const superUserVerifyToken = (req : reqType, res : resType, next : (err?:ErrorResponse) => void) => {
-    const superUserToken: string = req.cookies.superUserToken
-    console.log(superUserToken);
-    
-    if (superUserToken) {
-
-        jwt.verify(superUserToken, 'mySecretKeyForSuperUser', (err, decoded) => {
-            if (err) {
-                next(ErrorResponse.forbidden('Failed to varify supreUser token'))
-            } else {
-                console.log('SupreUser Token Verified')
-                next()
+export const superUserVerifyToken = (
+  req: reqType,
+  res: resType,
+  next: (err?: ErrorResponse) => void
+) => {
+  const superUserToken: string = req.cookies.superUserToken;
+  if (superUserToken) {
+    jwt.verify(
+      superUserToken,
+      "mySecretKeyForSuperUser",
+      async (err, decoded) => {
+        if (err) {
+          next(ErrorResponse.forbidden("Session expired"));
+        } else {
+          const payload: JwtPayload = decoded as JwtPayload;
+          if (payload?.createdAt) {//only for guest users
+            let remainingTime =
+              payload?.createdAt + 30 * 60 * 1000 - Date.now();
+            remainingTime = Math.floor(remainingTime / 1000 / 60);
+            if (remainingTime < 0) {
+              await updateGuest(superUserToken);
+              return next(ErrorResponse.forbidden("Full access expired"));
             }
-        })
-    } else {
-        next(ErrorResponse.unauthorized('Un-authorised access'))
-    }
-}
+            req.remainingTime = remainingTime;
+          }
+          next();
+        }
+      }
+    );
+  } else {
+    next(ErrorResponse.unauthorized("Un-authorised access"));
+  }
+};

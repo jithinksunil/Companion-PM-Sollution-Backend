@@ -7,6 +7,7 @@ import {superUserVerifyToken} from '../middlewares/superUser/tokenVerification';
 const superUserRouter = express.Router()
 superUserRouter.post('/signup', superUseController.signUp)
 superUserRouter.post('/login', superUseController.logIn)
+superUserRouter.get('/login/guest', superUseController.guestLogin)
 superUserRouter.get('/logout', superUseController.logout)
 
 superUserRouter.get('/verifyToken', superUserVerifyToken, superUserSessionCheck, superUseController.verifyToken)

@@ -8,7 +8,9 @@ export interface UserDocument extends Document {
     password: string,
     status: boolean,
     membership:string,
-    position:string
+    position:string,
+    guestToken:string,
+    createdAt:Date
 }
 
 const newSchema = new mongoose.Schema<UserDocument>({
@@ -21,15 +23,14 @@ const newSchema = new mongoose.Schema<UserDocument>({
     },
     email: {
         type: String,
-        required: true
     },
     companyName: {
         type: String,
-        required: true
+        required:true,
+        default:'GuestCompany'
     },
     password: {
         type: String,
-        required: true
     },
     status: {
         type: Boolean,
@@ -41,8 +42,10 @@ const newSchema = new mongoose.Schema<UserDocument>({
         required: true,
         default: 'Free'
     },
-    position:{type:String,default:"superUser"}
-})
+    position:{type:String,default:"superUser"},
+    guestToken:{type:String},
+    createdAt:{type:Date}
+},{timestamps:true})
 
 const superUserCollection = mongoose.model<UserDocument>('super_user_collection', newSchema) // creating collection using the defined schema and assign to new Model
 

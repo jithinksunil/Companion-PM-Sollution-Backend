@@ -12,7 +12,7 @@ const chatController = {
         })
     },
     startChat: (req: reqType, res: resType) => {
-        let { senderId, recieverId } = req.body
+        const { senderId, recieverId } = req.body
         if (senderId !== recieverId) {
             messagesAndChatDetails(senderId, recieverId).then((result) => {
                 res.json(result)
