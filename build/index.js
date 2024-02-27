@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 (0, mongoos_1.default)();
 app.use((0, cors_1.default)({
-    origin: true,
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],

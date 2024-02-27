@@ -29,7 +29,7 @@ mongodb();
 
 app.use(
   cors({
-    origin: true,
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
     credentials: true, //cors allow cookies and headers with the request
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
