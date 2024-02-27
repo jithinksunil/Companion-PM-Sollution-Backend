@@ -5,27 +5,28 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./build/index.js",
-    "dev": "ts-node index.ts --w"
+    "start": "nodemon ./build/index.js",
+    "dev": "npx tsc -w",
+    "dev:start": "ts-node index.ts --w"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/create-config": "^0.4.2",
+    "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.17",
-    "@types/morgan": "^1.9.4",
-    "@types/node": "^18.15.0",
-    "@typescript-eslint/eslint-plugin": "^5.56.0",
-    "@typescript-eslint/parser": "^5.56.0",
-    "@eslint/create-config": "^0.4.2",
-    "@types/cookie-parser": "^1.4.3",
     "@types/express-session": "^1.17.7",
     "@types/jsonwebtoken": "^9.0.1",
+    "@types/morgan": "^1.9.4",
     "@types/multer": "^1.4.7",
+    "@types/node": "^18.15.0",
     "@types/nodemailer": "^6.4.7",
     "@types/socket.io": "^3.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
     "eslint": "^8.36.0"
   },
   "dependencies": {
@@ -37,14 +38,15 @@
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.11.1",
+    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^6.9.1",
+    "nodemon": "^3.1.0",
     "path": "^0.12.7",
     "socket.io": "^4.6.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^4.9.5",
-    "morgan": "^1.10.0"
+    "typescript": "^4.9.5"
   }
 }
