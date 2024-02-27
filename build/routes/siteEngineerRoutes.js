@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const multer_1 = __importDefault(require("../config/multer"));
+const siteEngineerController_1 = __importDefault(require("../controllers/siteEngineer/siteEngineerController"));
+const tokenVerification_1 = require("../middlewares/siteEngineer/tokenVerification");
+const siteEngineerRouter = express_1.default.Router();
+siteEngineerRouter.post('/login', siteEngineerController_1.default.logIn);
+siteEngineerRouter.use(tokenVerification_1.siteEngineerVerifyToken);
+siteEngineerRouter.get('/verifyToken', siteEngineerController_1.default.verifyToken);
+siteEngineerRouter.get('/dashboard', siteEngineerController_1.default.siteEngineerDashBoard);
+siteEngineerRouter.get('/project', siteEngineerController_1.default.project);
+siteEngineerRouter.get('/profile', siteEngineerController_1.default.siteEngineerProfile);
+siteEngineerRouter.post('/updateImage', multer_1.default.single('file'), siteEngineerController_1.default.updateImage);
+siteEngineerRouter.get('/attendence', siteEngineerController_1.default.markAttendence);
+siteEngineerRouter.post('/updateProfile', siteEngineerController_1.default.updateProfile);
+exports.default = siteEngineerRouter;

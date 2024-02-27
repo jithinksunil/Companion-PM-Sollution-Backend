@@ -1,0 +1,27 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const multer_1 = __importDefault(require("../config/multer"));
+const superUserController_1 = __importDefault(require("../controllers/superUser/superUserController"));
+const sessionCheck_1 = require("../middlewares/superUser/sessionCheck");
+const tokenVerification_1 = require("../middlewares/superUser/tokenVerification");
+const superUserRouter = express_1.default.Router();
+superUserRouter.post('/signup', superUserController_1.default.signUp);
+superUserRouter.post('/login', superUserController_1.default.logIn);
+superUserRouter.get('/login/guest', superUserController_1.default.guestLogin);
+superUserRouter.get('/logout', superUserController_1.default.logout);
+superUserRouter.get('/verifyToken', tokenVerification_1.superUserVerifyToken, sessionCheck_1.superUserSessionCheck, superUserController_1.default.verifyToken);
+superUserRouter.get('/dashboard', tokenVerification_1.superUserVerifyToken, sessionCheck_1.superUserSessionCheck, superUserController_1.default.superUserDashBoard);
+superUserRouter.get('/profile', tokenVerification_1.superUserVerifyToken, sessionCheck_1.superUserSessionCheck, superUserController_1.default.superUserProfile);
+superUserRouter.post('/updateimage', tokenVerification_1.superUserVerifyToken, sessionCheck_1.superUserSessionCheck, multer_1.default.single('file'), superUserController_1.default.updateImage);
+superUserRouter.post('/updateprofile', tokenVerification_1.superUserVerifyToken, sessionCheck_1.superUserSessionCheck, superUserController_1.default.updateProfile);
+superUserRouter.get('/connections', superUserController_1.default.connections);
+superUserRouter.get('/siteengineerlist', superUserController_1.default.siteEngineerList);
+superUserRouter.post('/updatesiteengineerassignment', superUserController_1.default.siteEngineerAssignment);
+superUserRouter.post('/updateprojectassignment', tokenVerification_1.superUserVerifyToken, sessionCheck_1.superUserSessionCheck, superUserController_1.default.updateProjectAssingment);
+superUserRouter.post('/addConnection', tokenVerification_1.superUserVerifyToken, sessionCheck_1.superUserSessionCheck, superUserController_1.default.addConnection);
+superUserRouter.post('/paymentcomplete', tokenVerification_1.superUserVerifyToken, sessionCheck_1.superUserSessionCheck, superUserController_1.default.paymentComplete);
+exports.default = superUserRouter;
