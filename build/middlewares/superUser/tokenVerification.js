@@ -18,6 +18,7 @@ const ErrorResponse_1 = __importDefault(require("../../error/ErrorResponse"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const superUserVerifyToken = (req, res, next) => {
     const superUserToken = req.headers.authorization;
+    console.log(superUserToken);
     if (superUserToken) {
         jsonwebtoken_1.default.verify(superUserToken, 'mySecretKeyForSuperUser', (err, decoded) => __awaiter(void 0, void 0, void 0, function* () {
             if (err) {

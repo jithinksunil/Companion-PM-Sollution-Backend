@@ -9,6 +9,7 @@ export const superUserVerifyToken = (
   next: (err?: ErrorResponse) => void
 ) => {
   const superUserToken: string | undefined = req.headers.authorization;
+console.log(superUserToken);
 
   if (superUserToken) {
     jwt.verify(
