@@ -18,19 +18,21 @@ const ErrorResponse_1 = __importDefault(require("../../error/ErrorResponse"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const superUserVerifyToken = (req, res, next) => {
     const superUserToken = req.cookies.superUserToken;
+    console.log(superUserToken);
     if (superUserToken) {
-        jsonwebtoken_1.default.verify(superUserToken, "mySecretKeyForSuperUser", (err, decoded) => __awaiter(void 0, void 0, void 0, function* () {
+        jsonwebtoken_1.default.verify(superUserToken, 'mySecretKeyForSuperUser', (err, decoded) => __awaiter(void 0, void 0, void 0, function* () {
             if (err) {
-                next(ErrorResponse_1.default.forbidden("Session expired"));
+                next(ErrorResponse_1.default.forbidden('Session expired'));
             }
             else {
                 const payload = decoded;
-                if (payload === null || payload === void 0 ? void 0 : payload.createdAt) { //only for guest users
+                if (payload === null || payload === void 0 ? void 0 : payload.createdAt) {
+                    //only for guest users
                     let remainingTime = (payload === null || payload === void 0 ? void 0 : payload.createdAt) + 30 * 60 * 1000 - Date.now();
                     remainingTime = Math.floor(remainingTime / 1000 / 60);
                     if (remainingTime < 0) {
                         yield (0, guestRepository_1.updateGuest)(superUserToken);
-                        return next(ErrorResponse_1.default.forbidden("Full access expired"));
+                        return next(ErrorResponse_1.default.forbidden('Full access expired'));
                     }
                     req.remainingTime = remainingTime;
                 }
@@ -39,7 +41,7 @@ const superUserVerifyToken = (req, res, next) => {
         }));
     }
     else {
-        next(ErrorResponse_1.default.unauthorized("Un-authorised access"));
+        next(ErrorResponse_1.default.unauthorized('Un-authorised access'));
     }
 };
 exports.superUserVerifyToken = superUserVerifyToken;
