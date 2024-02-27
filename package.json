@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./build/index.js",
     "dev": "npx tsc -w",
-    "dev:start": "ts-node index.ts --w"
+    "dev:start": "concurrently \"npm run dev\" \"npm start\""
   },
   "keywords": [],
   "author": "",
@@ -27,6 +27,7 @@
     "@types/socket.io": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
+    "concurrently": "^8.2.2",
     "eslint": "^8.36.0"
   },
   "dependencies": {
