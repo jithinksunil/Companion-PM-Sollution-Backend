@@ -1,0 +1,17 @@
+"use strict";
+exports.__esModule = true;
+var express_1 = require("express");
+var multer_1 = require("../config/multer");
+var siteEngineerController_1 = require("../controllers/siteEngineer/siteEngineerController");
+var tokenVerification_1 = require("../middlewares/siteEngineer/tokenVerification");
+var siteEngineerRouter = express_1["default"].Router();
+siteEngineerRouter.post('/login', siteEngineerController_1["default"].logIn);
+siteEngineerRouter.use(tokenVerification_1.siteEngineerVerifyToken);
+siteEngineerRouter.get('/verifyToken', siteEngineerController_1["default"].verifyToken);
+siteEngineerRouter.get('/dashboard', siteEngineerController_1["default"].siteEngineerDashBoard);
+siteEngineerRouter.get('/project', siteEngineerController_1["default"].project);
+siteEngineerRouter.get('/profile', siteEngineerController_1["default"].siteEngineerProfile);
+siteEngineerRouter.post('/updateImage', multer_1["default"].single('file'), siteEngineerController_1["default"].updateImage);
+siteEngineerRouter.get('/attendence', siteEngineerController_1["default"].markAttendence);
+siteEngineerRouter.post('/updateProfile', siteEngineerController_1["default"].updateProfile);
+exports["default"] = siteEngineerRouter;

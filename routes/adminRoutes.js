@@ -1,0 +1,15 @@
+"use strict";
+exports.__esModule = true;
+var express_1 = require("express");
+var adminController_1 = require("../controllers/admin/adminController");
+var sessionCheck_1 = require("../middlewares/admin/sessionCheck");
+var tokenVerification_1 = require("../middlewares/admin/tokenVerification");
+var adminRouter = express_1["default"].Router();
+adminRouter.post('/login', adminController_1["default"].logIn);
+adminRouter.use(tokenVerification_1.adminVerifyToken, sessionCheck_1.adminSessionCheck);
+adminRouter.get('/verifyToken', adminController_1["default"].verifyToken);
+adminRouter.get('/dashboard', adminController_1["default"].adminDashBoard);
+adminRouter.get('/profile', adminController_1["default"].adminProfile);
+adminRouter.get('/superusermanagement', adminController_1["default"].superUserManagement);
+adminRouter.get('/blockorunblock', adminController_1["default"].blockOrUnblock);
+exports["default"] = adminRouter;

@@ -1,0 +1,18 @@
+"use strict";
+exports.__esModule = true;
+var express_1 = require("express");
+var multer_1 = require("../config/multer");
+var projectManagerController_1 = require("../controllers/projectManager/projectManagerController");
+var sessionCheck_1 = require("../middlewares/projectManager/sessionCheck");
+var tokenVerification_1 = require("../middlewares/projectManager/tokenVerification");
+var projectManagerRouter = express_1["default"].Router();
+projectManagerRouter.post('/signup', projectManagerController_1["default"].signUp);
+projectManagerRouter.post('/login', projectManagerController_1["default"].logIn);
+projectManagerRouter.use(tokenVerification_1.projectManagerVerifyToken, sessionCheck_1.projectManagerSessionCheck);
+projectManagerRouter.get('/verifyToken', projectManagerController_1["default"].verifyToken);
+projectManagerRouter.get('/dashboard', projectManagerController_1["default"].projectManagerDashBoard);
+projectManagerRouter.get('/profile', projectManagerController_1["default"].projectManagerProfile);
+projectManagerRouter.post('/updateimage', multer_1["default"].single('file'), projectManagerController_1["default"].updateImage);
+projectManagerRouter.get('/attendence', projectManagerController_1["default"].markAttendence);
+projectManagerRouter.post('/updateprofile', projectManagerController_1["default"].updateProfile);
+exports["default"] = projectManagerRouter;

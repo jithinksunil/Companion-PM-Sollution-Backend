@@ -31,8 +31,8 @@ app.use(
   cors({
     origin: '*',
     methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'],
-    credentials: true, //cors allow cookies and headers with the request
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    // credentials: true, //cors allow cookies and headers with the request
+    // allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   })
 );
 
