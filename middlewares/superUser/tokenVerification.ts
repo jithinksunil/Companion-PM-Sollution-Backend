@@ -8,8 +8,7 @@ export const superUserVerifyToken = (
   res: resType,
   next: (err?: ErrorResponse) => void
 ) => {
-  const superUserToken: string = req.cookies.superUserToken;
-  console.log(superUserToken);
+  const superUserToken: string | undefined = req.headers.authorization;
 
   if (superUserToken) {
     jwt.verify(
