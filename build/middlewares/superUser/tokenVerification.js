@@ -36,6 +36,7 @@ const superUserVerifyToken = (req, res, next) => {
                     }
                     req.remainingTime = remainingTime;
                 }
+                req.superUser = payload;
                 next();
             }
         }));
