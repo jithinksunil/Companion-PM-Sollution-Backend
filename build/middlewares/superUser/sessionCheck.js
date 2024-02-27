@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.superUserSessionCheck = void 0;
 const ErrorResponse_1 = __importDefault(require("../../error/ErrorResponse"));
 const superUserSessionCheck = (req, res, next) => {
+    console.log(!!req.session.superUser);
     if (req.session.superUser) {
         console.log('session verified');
         next();
